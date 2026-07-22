@@ -1,0 +1,148 @@
+# Routing for yoavschneider.dev, split by target namespace: IngressRoute must live
+# in the same namespace as the service it points to. Each project owns its own
+# build/k8s (carpet, db-risk-factor); this repo only owns these routing objects.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-projects-carpet
+  namespace: carpet
+spec:
+  stripPrefix:
+    prefixes:
+      - /projects/carpet
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-carpet-api
+  namespace: carpet
+spec:
+  stripPrefix:
+    prefixes:
+      - /carpet/api
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: yoavschneider-dev-carpet
+  namespace: carpet
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/carpet/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-carpet-api
+      services:
+        - name: carpet
+          port: ws
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/projects/carpet`)
+      kind: Rule
+      middlewares:
+        - name: strip-projects-carpet
+      services:
+        - name: carpet
+          port: http
+---
+# gaza-care-bridge (petition) namespace/services (web:80, api:8089) are created
+# by that project's own k8s manifests, not this repo — this route just waits for them.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gaza-care-bridge
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-projects-petition
+  namespace: gaza-care-bridge
+spec:
+  stripPrefix:
+    prefixes:
+      - /projects/petition
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-petition-api
+  namespace: gaza-care-bridge
+spec:
+  stripPrefix:
+    prefixes:
+      - /petition/api
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: yoavschneider-dev-petition
+  namespace: gaza-care-bridge
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/petition/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-petition-api
+      services:
+        - name: api
+          port: 8089
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/projects/petition`)
+      kind: Rule
+      middlewares:
+        - name: strip-projects-petition
+      services:
+        - name: web
+          port: 80
+---
+# db-risk-factor namespace/services (landing-page:80, backend:8080) are created by
+# that project's own k8s manifests, not this repo — this route just waits for them.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db-risk-factor
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-projects-db
+  namespace: db-risk-factor
+spec:
+  stripPrefix:
+    prefixes:
+      - /projects/db
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-db-api
+  namespace: db-risk-factor
+spec:
+  stripPrefix:
+    prefixes:
+      - /db/api
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: yoavschneider-dev-db
+  namespace: db-risk-factor
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/db/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-db-api
+      services:
+        - name: backend
+          port: 8080
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/projects/db`)
+      kind: Rule
+      middlewares:
+        - name: strip-projects-db
+      services:
+        - name: landing-page
+          port: 80
