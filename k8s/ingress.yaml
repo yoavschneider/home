@@ -70,7 +70,7 @@ metadata:
 spec:
   stripPrefix:
     prefixes:
-      - /petition/api
+      - /petition
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
