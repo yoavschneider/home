@@ -5,3 +5,5 @@ resources:
   - flux.yaml
   - cloudflared-deployment.yaml
   - ingress.yaml
+  - mongo.yaml
+  - mongo-backup.yaml

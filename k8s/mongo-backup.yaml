@@ -1,0 +1,68 @@
+# mongodump each db to a gzip archive (initContainer, shares emptyDir), then
+# aws-cli uploads it to R2 (S3-compatible) from the main container.
+# repoguide.dev: daily. Everything else: weekly.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup-repoguide
+  namespace: db
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: dump
+              image: mongo:8.0
+              command: ["sh", "-c", "mongodump --uri=\"$MONGO_URI\" --gzip --archive=/backup/repoguide-$(date +%F).archive.gz"]
+              env:
+                - name: MONGO_URI
+                  valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: repoguide-backup-uri } }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
+          containers:
+            - name: upload
+              image: amazon/aws-cli:2.17.62
+              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/repoguide/ --recursive"]
+              envFrom:
+                - secretRef: { name: r2-credentials }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
+          volumes:
+            - name: backup
+              emptyDir: {}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup-others
+  namespace: db
+spec:
+  schedule: "0 3 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: dump
+              image: mongo:8.0
+              command: ["sh", "-c", "mongodump --uri=\"$MONGO_URI\" --gzip --archive=/backup/db-risk-factor-$(date +%F).archive.gz"]
+              env:
+                - name: MONGO_URI
+                  valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: db-risk-factor-backup-uri } }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
+          containers:
+            - name: upload
+              image: amazon/aws-cli:2.17.62
+              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/db-risk-factor/ --recursive"]
+              envFrom:
+                - secretRef: { name: r2-credentials }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
+          volumes:
+            - name: backup
+              emptyDir: {}

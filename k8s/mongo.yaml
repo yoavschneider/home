@@ -1,0 +1,175 @@
+# Shared MongoDB replica set (rs0) for all projects, spread across the 4 VPS
+# nodes. Each project gets its own database and user (created by the init
+# script below), not a shared database — services still own their own k8s
+# manifests and just point MONGO_URI at the members below.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-users
+  namespace: db
+data:
+  init-users.sh: |
+    #!/bin/bash
+    set -e
+    mongosh <<EOF
+    db = db.getSiblingDB('db_risk_factor')
+    db.createUser({
+      user: '$DB_RISK_FACTOR_MONGO_USER',
+      pwd: '$DB_RISK_FACTOR_MONGO_PASSWORD',
+      roles: [{ role: 'readWrite', db: 'db_risk_factor' }]
+    })
+    db = db.getSiblingDB('repoguide')
+    db.createUser({
+      user: '$REPOGUIDE_MONGO_USER',
+      pwd: '$REPOGUIDE_MONGO_PASSWORD',
+      roles: [{ role: 'readWrite', db: 'repoguide' }]
+    })
+    EOF
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-headless
+  namespace: db
+spec:
+  clusterIP: None
+  selector: { app: mongo }
+  ports:
+    - { port: 27017, targetPort: 27017 }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: db
+spec:
+  # Seed only — clients should use a full replicaSet=rs0 connection string
+  # listing all three mongo-N.mongo-headless hosts, not just this service.
+  selector: { app: mongo }
+  ports:
+    - { port: 27017, targetPort: 27017 }
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: db
+spec:
+  serviceName: mongo-headless
+  replicas: 3
+  selector:
+    matchLabels: { app: mongo }
+  template:
+    metadata:
+      labels: { app: mongo }
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels: { app: mongo }
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
+      # mongod demands the keyfile be readable ONLY by its owner (0400/0600).
+      # A Secret volume can't be owned by uid 999 directly, so copy it into an
+      # emptyDir with the right owner/mode before mongod starts.
+      initContainers:
+        - name: keyfile-perms
+          image: mongo:8.0
+          command: ["sh", "-c", "cp /keyfile-src/keyfile /keyfile/keyfile && chmod 400 /keyfile/keyfile"]
+          volumeMounts:
+            - { name: keyfile-src, mountPath: /keyfile-src }
+            - { name: keyfile, mountPath: /keyfile }
+      containers:
+        - name: mongo
+          image: mongo:8.0
+          args: ["--replSet", "rs0", "--keyFile", "/etc/mongo-keyfile/keyfile", "--bind_ip_all"]
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom: { secretKeyRef: { name: mongo-root-credentials, key: username } }
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-root-credentials, key: password } }
+            - name: DB_RISK_FACTOR_MONGO_USER
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: db-risk-factor-username } }
+            - name: DB_RISK_FACTOR_MONGO_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: db-risk-factor-password } }
+            - name: REPOGUIDE_MONGO_USER
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: repoguide-username } }
+            - name: REPOGUIDE_MONGO_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: repoguide-password } }
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - { name: data, mountPath: /data/db }
+            - { name: init-users, mountPath: /docker-entrypoint-initdb.d }
+            - { name: keyfile, mountPath: /etc/mongo-keyfile }
+      volumes:
+        - name: init-users
+          configMap: { name: mongo-init-users, defaultMode: 0755 }
+        - name: keyfile-src
+          secret: { secretName: mongo-keyfile, defaultMode: 0400 }
+        - name: keyfile
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests: { storage: 5Gi }
+---
+# One-shot: forms the replica set out of the 3 StatefulSet pods. Safe to
+# re-run (rs.initiate skips if already initialized) but Jobs don't retry
+# in place, so delete the job before re-applying if you need to force a rerun.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-rs-init
+  namespace: db
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: rs-init
+          image: mongo:8.0
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom: { secretKeyRef: { name: mongo-root-credentials, key: username } }
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-root-credentials, key: password } }
+          command:
+            - bash
+            - -c
+            - |
+              set -e
+              until mongosh --host mongo-0.mongo-headless.db.svc.cluster.local \
+                  -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" \
+                  --authenticationDatabase admin --quiet --eval "db.adminCommand('ping')"; do
+                sleep 3
+              done
+              mongosh --host mongo-0.mongo-headless.db.svc.cluster.local \
+                  -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" \
+                  --authenticationDatabase admin --quiet --eval '
+                try {
+                  rs.initiate({
+                    _id: "rs0",
+                    members: [
+                      { _id: 0, host: "mongo-0.mongo-headless.db.svc.cluster.local:27017" },
+                      { _id: 1, host: "mongo-1.mongo-headless.db.svc.cluster.local:27017" },
+                      { _id: 2, host: "mongo-2.mongo-headless.db.svc.cluster.local:27017" }
+                    ]
+                  })
+                } catch (e) {
+                  if (!/already initialized/.test(e.message)) throw e
+                }
+              '
