@@ -121,7 +121,7 @@ metadata:
 spec:
   stripPrefix:
     prefixes:
-      - /db/api
+      - /db
 ---
 # Without this, /projects/db (no trailing slash) still 200s via the PathPrefix
 # route below, but the browser then resolves the page's relative asset paths
