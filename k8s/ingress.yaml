@@ -155,7 +155,7 @@ spec:
           port: 8080
     - match: Host(`yoavschneider.dev`) && Path(`/projects/db`)
       kind: Rule
-      priority: 10
+      priority: 100
       middlewares:
         - name: redirect-projects-db-slash
       services:
