@@ -168,3 +168,73 @@ spec:
       services:
         - name: landing-page
           port: 80
+---
+# tell namespace/services (landing-page:80, backend:8787) are created by
+# that project's own k8s manifests, not this repo — this route just waits for them.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tell
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-projects-tell
+  namespace: tell
+spec:
+  stripPrefix:
+    prefixes:
+      - /projects/tell
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-tell-api
+  namespace: tell
+spec:
+  stripPrefix:
+    prefixes:
+      - /tell/api
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-projects-tell-slash
+  namespace: tell
+spec:
+  redirectRegex:
+    regex: ^https://yoavschneider\.dev/projects/tell$
+    replacement: https://yoavschneider.dev/projects/tell/
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: yoavschneider-dev-tell
+  namespace: tell
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/tell/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-tell-api
+      services:
+        - name: backend
+          port: 8787
+    - match: Host(`yoavschneider.dev`) && Path(`/projects/tell`)
+      kind: Rule
+      priority: 100
+      middlewares:
+        - name: redirect-projects-tell-slash
+      services:
+        - name: landing-page
+          port: 80
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/projects/tell`)
+      kind: Rule
+      middlewares:
+        - name: strip-projects-tell
+      services:
+        - name: landing-page
+          port: 80

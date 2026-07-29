@@ -29,6 +29,12 @@ data:
       pwd: '$REPOGUIDE_MONGO_PASSWORD',
       roles: [{ role: 'readWrite', db: 'repoguide' }]
     })
+    db = db.getSiblingDB('tell')
+    db.createUser({
+      user: '$TELL_MONGO_USER',
+      pwd: '$TELL_MONGO_PASSWORD',
+      roles: [{ role: 'readWrite', db: 'tell' }]
+    })
     EOF
 ---
 apiVersion: v1
@@ -105,6 +111,10 @@ spec:
               valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: repoguide-username } }
             - name: REPOGUIDE_MONGO_PASSWORD
               valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: repoguide-password } }
+            - name: TELL_MONGO_USER
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: tell-username } }
+            - name: TELL_MONGO_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: tell-password } }
           ports:
             - containerPort: 27017
           volumeMounts:

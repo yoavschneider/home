@@ -55,10 +55,18 @@ spec:
                   valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: db-risk-factor-backup-uri } }
               volumeMounts:
                 - { name: backup, mountPath: /backup }
+            - name: dump-tell
+              image: mongo:8.0
+              command: ["sh", "-c", "mongodump --uri=\"$MONGO_URI\" --gzip --archive=/backup/tell-$(date +%F).archive.gz"]
+              env:
+                - name: MONGO_URI
+                  valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: tell-backup-uri } }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
           containers:
             - name: upload
               image: amazon/aws-cli:2.17.62
-              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/db-risk-factor/ --recursive"]
+              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/db-risk-factor/ --recursive --exclude '*' --include 'db-risk-factor-*' && aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/tell/ --recursive --exclude '*' --include 'tell-*'"]
               envFrom:
                 - secretRef: { name: r2-credentials }
               volumeMounts:
