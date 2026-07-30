@@ -35,6 +35,12 @@ data:
       pwd: '$TELL_MONGO_PASSWORD',
       roles: [{ role: 'readWrite', db: 'tell' }]
     })
+    db = db.getSiblingDB('frisk')
+    db.createUser({
+      user: '$FRISK_MONGO_USER',
+      pwd: '$FRISK_MONGO_PASSWORD',
+      roles: [{ role: 'readWrite', db: 'frisk' }]
+    })
     EOF
 ---
 apiVersion: v1
@@ -115,6 +121,10 @@ spec:
               valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: tell-username } }
             - name: TELL_MONGO_PASSWORD
               valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: tell-password } }
+            - name: FRISK_MONGO_USER
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: frisk-username } }
+            - name: FRISK_MONGO_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: frisk-password } }
           ports:
             - containerPort: 27017
           volumeMounts:

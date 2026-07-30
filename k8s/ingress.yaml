@@ -238,3 +238,73 @@ spec:
       services:
         - name: landing-page
           port: 80
+---
+# frisk namespace/services (landing-page:80, backend:8080) are created by
+# that project's own k8s manifests, not this repo — this route just waits for them.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frisk
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-projects-frisk
+  namespace: frisk
+spec:
+  stripPrefix:
+    prefixes:
+      - /projects/frisk
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-frisk-api
+  namespace: frisk
+spec:
+  stripPrefix:
+    prefixes:
+      - /frisk/api
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-projects-frisk-slash
+  namespace: frisk
+spec:
+  redirectRegex:
+    regex: ^https://yoavschneider\.dev/projects/frisk$
+    replacement: https://yoavschneider.dev/projects/frisk/
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: yoavschneider-dev-frisk
+  namespace: frisk
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/frisk/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-frisk-api
+      services:
+        - name: backend
+          port: 8080
+    - match: Host(`yoavschneider.dev`) && Path(`/projects/frisk`)
+      kind: Rule
+      priority: 100
+      middlewares:
+        - name: redirect-projects-frisk-slash
+      services:
+        - name: landing-page
+          port: 80
+    - match: Host(`yoavschneider.dev`) && PathPrefix(`/projects/frisk`)
+      kind: Rule
+      middlewares:
+        - name: strip-projects-frisk
+      services:
+        - name: landing-page
+          port: 80
