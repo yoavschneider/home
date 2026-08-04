@@ -1,0 +1,14 @@
+{
+  "name": "uptime-monitor",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+  "send_email": [
+    { "name": "EMAIL" }
+  ],
+  "kv_namespaces": [
+    { "binding": "STATE", "id": "c321356ea7fc4fcb8e4087276804cdc6" }
+  ]
+}
