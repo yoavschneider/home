@@ -41,6 +41,12 @@ data:
       pwd: '$FRISK_MONGO_PASSWORD',
       roles: [{ role: 'readWrite', db: 'frisk' }]
     })
+    db = db.getSiblingDB('klimaantrag')
+    db.createUser({
+      user: '$KLIMAANTRAG_MONGO_USER',
+      pwd: '$KLIMAANTRAG_MONGO_PASSWORD',
+      roles: [{ role: 'readWrite', db: 'klimaantrag' }]
+    })
     EOF
 ---
 apiVersion: v1
@@ -125,6 +131,10 @@ spec:
               valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: frisk-username } }
             - name: FRISK_MONGO_PASSWORD
               valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: frisk-password } }
+            - name: KLIMAANTRAG_MONGO_USER
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: klimaantrag-username } }
+            - name: KLIMAANTRAG_MONGO_PASSWORD
+              valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: klimaantrag-password } }
           ports:
             - containerPort: 27017
           volumeMounts:

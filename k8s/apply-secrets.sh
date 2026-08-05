@@ -24,6 +24,9 @@ kubectl create secret generic mongo-service-credentials -n db \
   --from-literal=frisk-username="$MONGO_FRISK_USERNAME" \
   --from-literal=frisk-password="$MONGO_FRISK_PASSWORD" \
   --from-literal=frisk-backup-uri="$MONGO_FRISK_BACKUP_URI" \
+  --from-literal=klimaantrag-username="$MONGO_KLIMAANTRAG_USERNAME" \
+  --from-literal=klimaantrag-password="$MONGO_KLIMAANTRAG_PASSWORD" \
+  --from-literal=klimaantrag-backup-uri="$MONGO_KLIMAANTRAG_BACKUP_URI" \
   --dry-run=client -o yaml | kubectl apply -f -
 
 kubectl create secret generic mongo-keyfile -n db \

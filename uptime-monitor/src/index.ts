@@ -5,6 +5,7 @@ const SITES = [
   "https://flowgeo.io",
   "https://fodo.info",
   "https://hyphal.dev",
+  "https://klimaantrag.de",
   "https://mosqai.xyz",
   "https://ratsfashion.art",
   "https://repoguide.dev",

@@ -1,6 +1,6 @@
 # mongodump each db to a gzip archive (initContainer, shares emptyDir), then
 # aws-cli uploads it to R2 (S3-compatible) from the main container.
-# repoguide.dev: daily. Everything else: weekly.
+# repoguide.dev and klimaantrag (paid orders): daily. Everything else: weekly.
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -22,10 +22,18 @@ spec:
                   valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: repoguide-backup-uri } }
               volumeMounts:
                 - { name: backup, mountPath: /backup }
+            - name: dump-klimaantrag
+              image: mongo:8.0
+              command: ["sh", "-c", "mongodump --uri=\"$MONGO_URI\" --gzip --archive=/backup/klimaantrag-$(date +%F).archive.gz"]
+              env:
+                - name: MONGO_URI
+                  valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: klimaantrag-backup-uri } }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
           containers:
             - name: upload
               image: amazon/aws-cli:2.17.62
-              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/repoguide/ --recursive"]
+              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/repoguide/ --recursive --exclude '*' --include 'repoguide-*' && aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/klimaantrag/ --recursive --exclude '*' --include 'klimaantrag-*'"]
               envFrom:
                 - secretRef: { name: r2-credentials }
               volumeMounts:
