@@ -1,0 +1,5 @@
+# Crawlers only ever read this file at the domain root, so every path on
+# yoavschneider.dev has to be listed here, not in the project's own directory.
+User-agent: *
+Disallow: /projects/frisk
+Disallow: /frisk/

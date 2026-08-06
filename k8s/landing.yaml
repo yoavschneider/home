@@ -95,6 +95,12 @@ data:
       <footer><a href="/impressum.html">Impressum</a></footer>
     </body>
     </html>
+  robots.txt: |
+    # Crawlers only ever read this file at the domain root, so every path on
+    # yoavschneider.dev has to be listed here, not in the project's own directory.
+    User-agent: *
+    Disallow: /projects/frisk
+    Disallow: /frisk/
   impressum.html: |
     <!doctype html>
     <html lang="de">
@@ -130,7 +136,7 @@ data:
       <h1>Impressum</h1>
 
       <section>
-        <h2>Angaben gemäß § 5 TMG</h2>
+        <h2>Angaben gemäß § 5 DDG</h2>
         <p class="name">Yoav Schneider</p>
         <p>c/o COCENTER</p>
         <p>Koppoldstr. 1</p>
@@ -152,13 +158,6 @@ data:
       </section>
 
       <section>
-        <h2>EU-Streitschlichtung</h2>
-        <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-          <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.
-          Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>
-      </section>
-
-      <section>
         <h2>Verbraucherstreitbeilegung / Universalschlichtungsstelle</h2>
         <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
       </section>
@@ -167,7 +166,7 @@ data:
       <p class="lang">English translation</p>
 
       <section>
-        <h2>Information pursuant to § 5 TMG (German Telemedia Act)</h2>
+        <h2>Information pursuant to § 5 DDG (German Digital Services Act)</h2>
         <p class="name">Yoav Schneider</p>
         <p>c/o COCENTER</p>
         <p>Koppoldstr. 1</p>
@@ -186,13 +185,6 @@ data:
         <p>c/o COCENTER</p>
         <p>Koppoldstr. 1</p>
         <p>86551 Aichach</p>
-      </section>
-
-      <section>
-        <h2>EU Dispute Resolution</h2>
-        <p>The European Commission provides a platform for online dispute resolution (ODR):
-          <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.
-          Our email address can be found above in the legal notice.</p>
       </section>
 
       <section>
@@ -265,6 +257,11 @@ spec:
         - name: landing
           port: 80
     - match: Host(`yoavschneider.dev`) && Path(`/impressum.html`)
+      kind: Rule
+      services:
+        - name: landing
+          port: 80
+    - match: Host(`yoavschneider.dev`) && Path(`/robots.txt`)
       kind: Rule
       services:
         - name: landing
