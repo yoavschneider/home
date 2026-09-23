@@ -8,3 +8,5 @@ resources:
   - landing.yaml
   - mongo.yaml
   - mongo-backup.yaml
+  # The Airlock product page (its source and its own kustomization live there).
+  - ../airlock

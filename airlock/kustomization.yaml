@@ -1,0 +1,33 @@
+# The Airlock product page, served at yoavschneider.dev/projects/airlock/.
+#
+# Frisk's page lives in the frisk repo and ships as its own image, because
+# Frisk has a CI that builds one. Airlock's repo (~/code/oe) has no web build,
+# and this repo has no CI at all, so the page lives here and is served the way
+# the root landing page is: stock nginx with the files mounted from a
+# ConfigMap. configMapGenerator reads them straight from this directory, and
+# its content hash in the ConfigMap name makes every edit a rollout.
+#
+# It sits in the yoavschneider-dev namespace next to the root landing page
+# on purpose: the relay's namespace is `oe` and must not be renamed or shared
+# (see ~/code/oe/AGENTS.md), and a new `airlock` namespace would only invite
+# that confusion.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: yoavschneider-dev
+resources:
+  - deployment.yaml
+configMapGenerator:
+  - name: airlock-landing-html
+    files:
+      - index.html
+      - impressum.html
+      - landing.css
+      - widget.js
+      - faq-data.js
+      - scenarios.js
+  - name: airlock-landing-assets
+    files:
+      - assets/home-audio.webp
+  - name: airlock-landing-nginx
+    files:
+      - default.conf=nginx.conf

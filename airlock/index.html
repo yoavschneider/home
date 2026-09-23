@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Remove this and the server's X-Robots-Tag when downloads and checkout are ready. -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="theme-color" content="#f4f0e9" />
+  <title>Airlock | your computers at a glance</title>
+  <meta name="description" content="A small widget for people working across several computers. See which one is in a call, catch overlapping meetings, and know when the other machine needs your attention." />
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell site-header__inner">
+      <a class="brand" href="#top" aria-label="Airlock home"><span class="brand__symbol" aria-hidden="true"><i></i><i></i></span><span>airlock<span class="brand__period">.</span></span></a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="#see-it">See it in action</a><a href="#how-it-works">How it works</a><a href="#privacy">Privacy</a></nav>
+      <a class="header-link" href="#download">Get Airlock <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__wash" aria-hidden="true"></div>
+      <div class="shell hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow"><span class="eyebrow__dash"></span> For one person with more than one work computer</p>
+          <h1 id="hero-title">Two work laptops. One of you.</h1>
+          <p class="hero__intro">Airlock shows the call, sound, and notification status of your other computers in a small widget. If another laptop makes noise during a meeting, mute its speakers from the one you’re using. You can mute all speakers too.</p>
+          <div class="hero__actions"><a class="button button--ink" href="#see-it">See how it looks <span aria-hidden="true">↘</span></a><a class="text-link" href="#download">Download the beta <span aria-hidden="true">→</span></a></div>
+        </div>
+        <div class="hero__art" aria-label="Interactive Airlock warning showing a call on the Mac while the Windows laptop makes sound">
+          <div class="hero-stage">
+            <div class="hero-stage__top"><span class="hero-stage__window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>WORK MACBOOK · J1</span><span>IN A CALL <i class="stage-live-dot"></i></span></div>
+            <div class="scene-computers" aria-hidden="true">
+      <div class="scene-computer scene-computer--mac"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>● &nbsp; Teams</span><span>◖◖ &nbsp; 14:42</span></div><div class="scene-call"><div class="scene-call__header"><span class="scene-call__dot"></span> Meeting in progress</div><div class="scene-call__people"><i>AM</i><i>LK</i><i>YS</i></div><div class="scene-call__actions"><span>◉</span><span>▣</span><span>⋯</span><strong>Leave</strong></div></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J1 · WORK MACBOOK</span></div>
+    </div>
+          <div class="hero-stage__content">
+              <span class="hero-stage__eyebrow">ONE MEETING · OTHER LAPTOP NOT MUTED</span>
+              <div class="hero-stage__widget" data-demo-widget data-demo-panel="audio" data-demo-pill="micOpenUrgent" data-demo-initial="collapsed"></div>
+              <span class="hero-stage__hint">Click the red alert to see the details</span>
+            </div>
+          </div>
+          <p class="art-caption">Interactive example of the Airlock widget.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="intro-band"><div class="shell intro-band__inner"><p>Status from each of your computers.</p><span>Calls <i></i> microphones <i></i> pings <i></i> what needs you now</span></div></section>
+
+    <section class="scenarios section-pad" id="see-it" aria-labelledby="scenarios-title">
+      <div class="shell">
+        <div class="section-heading"><div><p class="eyebrow">A few familiar moments</p><h2 id="scenarios-title">When Airlock warns you.</h2><p>Four examples from a two-computer day. Click a widget to open or collapse it.</p></div><div class="carousel-controls" aria-label="Scenario controls"><button type="button" class="carousel-arrow" data-slide="previous" aria-label="Previous scenario">←</button><button type="button" class="carousel-arrow" data-slide="next" aria-label="Next scenario">→</button></div></div>
+        <div class="scenario-track" id="scenario-track" tabindex="0" aria-label="Airlock examples, scroll horizontally">
+          <article class="scenario scenario--peach">
+            <div class="scenario__visual">
+              <span class="scene-stage__caption">SOUND FROM THE OTHER LAPTOP</span>
+              <div class="scene-computers" aria-hidden="true">
+      <div class="scene-computer scene-computer--mac"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>● &nbsp; Teams</span><span>◖◖ &nbsp; 14:42</span></div><div class="scene-call"><div class="scene-call__header"><span class="scene-call__dot"></span> Meeting in progress</div><div class="scene-call__people"><i>AM</i><i>LK</i><i>YS</i></div><div class="scene-call__actions"><span>◉</span><span>▣</span><span>⋯</span><strong>Leave</strong></div></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J1 · WORK MACBOOK</span></div>
+      <div class="scene-computer scene-computer--windows"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>▦ &nbsp; Visual Studio Code</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="scene-code"><div class="scene-code__sidebar">⌕<br>◇<br>⑂<br>▦</div><div class="scene-code__file"><span>workspace / app.ts</span><div><em>01</em><code><b>const</b> day = <strong>"focused"</strong>;</code></div><div><em>02</em><code><b>function</b> finishWork() &#123;</code></div><div><em>03</em><code>&nbsp;&nbsp;<b>return</b> day;</code></div><div><em>04</em><code>&#125;</code></div><div><em>05</em><code>▌</code></div></div></div></div><div class="scene-computer__base"></div><div class="scene-computer__chip scene-computer__chip--sound">♪ &nbsp; Speakers on</div><span class="scene-computer__name">J2 · CONTRACT THINKPAD</span></div>
+    </div>
+              <div class="scenario__widget" data-demo-widget data-demo-panel="audio" data-demo-pill="micOpenUrgent"></div>
+              <div class="scene-stage__machines"><div><span>J1 · MAC</span><b>Work MacBook</b><small>In a call</small></div><div><span>J2 · WINDOWS</span><b>Contract ThinkPad</b><small>Speakers on</small></div></div>
+            </div>
+            <div class="scenario__text"><span class="scenario__number">01 / SOUND ON THE OTHER MACHINE</span><h3>Your other laptop is unmuted.</h3><p>You’re on a call on J1. J2 is playing sound. Airlock shows which laptop is noisy and offers Mute others.</p><span class="scenario__cue">Collapse the widget to see the pill</span></div>
+          </article>
+          <article class="scenario scenario--red">
+            <div class="scenario__visual">
+              <span class="scene-stage__caption">BOTH CALLS ARE LIVE</span>
+              <div class="scene-computers" aria-hidden="true">
+      <div class="scene-computer scene-computer--mac"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>● &nbsp; Teams</span><span>◖◖ &nbsp; 14:42</span></div><div class="scene-call"><div class="scene-call__header"><span class="scene-call__dot"></span> Meeting in progress</div><div class="scene-call__people"><i>AM</i><i>LK</i><i>YS</i></div><div class="scene-call__actions"><span>◉</span><span>▣</span><span>⋯</span><strong>Leave</strong></div></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J1 · WORK MACBOOK</span></div>
+      <div class="scene-computer scene-computer--windows"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>▦ &nbsp; Teams</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="scene-call scene-call--windows"><div class="scene-call__header"><span class="scene-call__dot"></span> Meeting in progress</div><div class="scene-call__people"><i>RC</i><i>JP</i><i>YS</i></div><div class="scene-call__actions"><span>◉</span><span>▣</span><span>⋯</span><strong>Leave</strong></div></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J2 · CONTRACT THINKPAD</span></div>
+    </div>
+              <div class="scenario__widget" data-demo-widget data-demo-panel="collision" data-demo-pill="urgentCollision"></div>
+              <div class="scene-stage__machines"><div><span>J1 · MAC</span><b>Work MacBook</b><small>In a call</small></div><div><span>J2 · WINDOWS</span><b>Contract ThinkPad</b><small>In a call</small></div></div>
+            </div>
+            <div class="scenario__text"><span class="scenario__number">02 / TWO CALLS</span><h3>Both jobs want you in a meeting.</h3><p>A call starts on J2 while you’re still in one on J1. Airlock shows both computers.</p><span class="scenario__cue">Collapse the widget to see the pill</span></div>
+          </article>
+          <article class="scenario scenario--violet">
+            <div class="scenario__visual">
+              <span class="scene-stage__caption">J2 NEEDS YOUR ATTENTION</span>
+              <div class="scene-computers" aria-hidden="true">
+      <div class="scene-computer scene-computer--mac"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>● &nbsp; Teams</span><span>◖◖ &nbsp; 14:42</span></div><div class="scene-call"><div class="scene-call__header"><span class="scene-call__dot"></span> Meeting in progress</div><div class="scene-call__people"><i>AM</i><i>LK</i><i>YS</i></div><div class="scene-call__actions"><span>◉</span><span>▣</span><span>⋯</span><strong>Leave</strong></div></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J1 · WORK MACBOOK</span></div>
+      <div class="scene-computer scene-computer--windows"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>▦ &nbsp; Visual Studio Code</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="scene-code"><div class="scene-code__sidebar">⌕<br>◇<br>⑂<br>▦</div><div class="scene-code__file"><span>workspace / app.ts</span><div><em>01</em><code><b>const</b> day = <strong>"focused"</strong>;</code></div><div><em>02</em><code><b>function</b> finishWork() &#123;</code></div><div><em>03</em><code>&nbsp;&nbsp;<b>return</b> day;</code></div><div><em>04</em><code>&#125;</code></div><div><em>05</em><code>▌</code></div></div></div></div><div class="scene-notification"><span class="scene-notification__icon">T</span><span><b>New notifications</b><small>3 pings on this computer</small></span><i>now</i></div><div class="scene-computer__base"></div><div class="scene-computer__chip scene-computer__chip--ping">● &nbsp; 3 unread</div><span class="scene-computer__name">J2 · CONTRACT THINKPAD</span></div>
+    </div>
+              <div class="scenario__widget" data-demo-widget data-demo-panel="quiet" data-demo-pill="warningInCall"></div>
+              <div class="scene-stage__machines"><div><span>J1 · MAC</span><b>Work MacBook</b><small>In a call</small></div><div><span>J2 · WINDOWS</span><b>Contract ThinkPad</b><small>3 unread</small></div></div>
+            </div>
+            <div class="scenario__text"><span class="scenario__number">03 / THE OTHER JOB PINGS</span><h3>Something needs you on J2.</h3><p>A Teams or Slack notification arrives on J2 while you’re in a call on J1. Airlock shows the count, never the message.</p><span class="scenario__cue">Collapse the widget to see the pill</span></div>
+          </article>
+          <article class="scenario scenario--green">
+            <div class="scenario__visual">
+              <span class="scene-stage__caption">ALL QUIET ACROSS BOTH COMPUTERS</span>
+              <div class="scene-computers" aria-hidden="true">
+      <div class="scene-computer scene-computer--mac"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>● &nbsp; Finder</span><span>◖◖ &nbsp; 14:42</span></div><div class="scene-idle"><span>14:42</span><small>Nothing on the calendar right now</small></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J1 · WORK MACBOOK</span></div>
+      <div class="scene-computer scene-computer--windows"><div class="scene-computer__screen"><div class="scene-computer__menubar"><span>▦ &nbsp; Visual Studio Code</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="scene-code"><div class="scene-code__sidebar">⌕<br>◇<br>⑂<br>▦</div><div class="scene-code__file"><span>workspace / app.ts</span><div><em>01</em><code><b>const</b> day = <strong>"focused"</strong>;</code></div><div><em>02</em><code><b>function</b> finishWork() &#123;</code></div><div><em>03</em><code>&nbsp;&nbsp;<b>return</b> day;</code></div><div><em>04</em><code>&#125;</code></div><div><em>05</em><code>▌</code></div></div></div></div><div class="scene-computer__base"></div><span class="scene-computer__name">J2 · CONTRACT THINKPAD</span></div>
+    </div>
+              <div class="scenario__widget" data-demo-widget data-demo-panel="clear" data-demo-pill="allClear"></div>
+              <div class="scene-stage__machines"><div><span>J1 · MAC</span><b>Work MacBook</b><small>Idle</small></div><div><span>J2 · WINDOWS</span><b>Contract ThinkPad</b><small>Coding</small></div></div>
+            </div>
+            <div class="scenario__text"><span class="scenario__number">04 / NOTHING TO FIX</span><h3>Both computers are quiet.</h3><p>You’re coding on J2. J1 is idle. Both are connected, so the widget stays green.</p><span class="scenario__cue">Collapse the widget to see the pill</span></div>
+          </article>
+        </div>
+        <div class="scenario-progress"><span id="scenario-count">01 / 04</span><span>Drag or scroll to explore <span aria-hidden="true">→</span></span></div>
+      </div>
+    </section>
+
+    <section class="benefits section-pad" id="how-it-works"><div class="shell benefits__grid"><div class="benefits__lead"><p class="eyebrow">The short version</p><h2>It shows what’s happening on the computer you’re <em>not</em> looking at.</h2><p>Install it on your machines, give each one a short label, and glance at the corner of your screen for calls, upcoming meetings, and pings.</p></div><div class="benefit-list"><div><span>01</span><div><h3>See what needs you</h3><p>Each computer shares its call, microphone, speaker, camera, and upcoming meeting status. Where available, Airlock also shows how many Teams or Slack notifications are waiting. The same little widget appears on every screen.</p></div></div><div><span>02</span><div><h3>Get warned about conflicts</h3><p>Airlock warns you before two meetings start together, and raises urgent alerts for two live calls or a microphone open on another computer during a call. It also flags sound or a ping from the other laptop while you’re busy.</p></div></div><div><span>03</span><div><h3>Fix the noisy one</h3><p>If another computer’s speakers are the problem, mute them from the one you’re using. Airlock can’t turn a microphone on or remotely unmute speakers.</p></div></div></div></div><span class="benefits__image-credit">Background image generated with AI</span></section>
+
+    <section class="widget-section section-pad" id="widget"><div class="shell widget-section__grid"><div><p class="eyebrow">Small by design</p><h2>A small widget in the corner.<br />Details on click.</h2><p>The pill can stay in a corner or appear only for alerts. Click it to see each computer. If another laptop is making noise, choose Mute others or Mute all.</p><div class="styles-row"><figure><div class="aw" data-aw-style="pill"></div><figcaption>Status pill</figcaption></figure><figure><div class="aw" data-aw-style="dot"></div><figcaption>Dot</figcaption></figure><figure><div class="aw" data-aw-style="cpu"></div><figcaption>CPU</figcaption></figure><figure><div class="aw" data-aw-style="battery"></div><figcaption>Battery</figcaption></figure></div><p class="small-note">The disguised styles show real readings from that computer, with status shown by color. Airlock keeps the widget out of supported screenshots and screen shares. On Mac, you can also turn on “Hide widget while screen-shared” for extra protection.</p></div><div class="widget-section__sample"><div class="widget-section__label">ON YOUR SCREEN · STATUS PILL</div><div data-demo-widget data-demo-panel="audio" data-demo-pill="micOpenUrgent"></div></div></div></section>
+
+<section class="privacy section-pad" id="privacy">
+      <div class="shell">
+        <div class="privacy__heading">
+          <div><p class="eyebrow">What Airlock can see</p><h2>What your computers share.</h2></div>
+          <div class="privacy__heading-aside"><p>Airlock shares call status, audio activity, and attention alerts between your computers. Meeting names, voices, and message text stay on the computer where they happened.</p><div class="privacy__key"><span class="privacy__key-dot"></span> Example: J1 is in a call</div></div>
+        </div>
+        <div class="privacy-flow">
+          <div class="privacy-flow__from"><span class="privacy-flow__label">01 / ON YOUR MAC · J1</span><div class="privacy-flow__screen"><span class="privacy-flow__screenbar">Teams · Meeting in progress</span><div class="privacy-flow__private"><strong>Project check-in</strong><span class="privacy-flow__participants"><i>AM</i><i>LK</i><i>SR</i></span><small>Voice, video, meeting name</small></div></div></div>
+          <div class="privacy-flow__middle"><div class="privacy-flow__packet"><span>02 / STATUS SHARED</span><b>In a call</b><b>Mic in use</b><b>Speakers on</b></div><small>Encrypted between your computers</small></div>
+          <div class="privacy-flow__to"><span class="privacy-flow__label">03 / ON YOUR WINDOWS LAPTOP · J2</span><div class="privacy-flow__received"><span class="live-dot"></span><strong>J1 is in a call</strong><small>No meeting name, sound, or picture.</small></div></div>
+        </div>
+        <div class="privacy__foot"><b>Stays on the computer</b><span>audio · video · messages · people’s names · files · screen</span><a class="text-link" href="#questions">Read the details <span aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
+
+    <section class="setup section-pad" id="setup"><div class="shell setup__grid"><div><p class="eyebrow">Getting started</p><h2>One code connects your computers.</h2><p>Start Airlock on the first computer. It gives you an invite code. Enter it on the others, and they appear in one little list. That code is your secret key: it defines who belongs to your network and encrypts the updates your computers share. The relay passes those updates along, but cannot read them. There’s no account to make.</p><p class="small-note">Your invite code is the key to your network. Keep it to yourself.</p></div><div class="setup__illustration" aria-label="Three computers joined with one invite code"><div class="setup__code"><span>YOUR INVITE CODE</span><b>ABCD EFGH JKLM NPQR<br />STUV WXYZ 2345 6789</b><small>Example only</small></div><div class="setup__machines"><div><i class="status-dot"></i><b>J1</b><span>Work MacBook</span></div><div><i class="status-dot"></i><b>J2</b><span>Client laptop</span></div><div><i class="status-dot"></i><b>J3</b><span>Home Mac</span></div></div></div></div></section>
+
+    <section class="download section-pad" id="download"><div class="shell download__grid"><div><p class="eyebrow">Try the beta</p><h2>Download Airlock.</h2><p>Each network has 14 days free from its first connection. No account or payment details to start.</p><p class="small-note">These beta builds are not code signed yet, so your system may show a warning the first time you open one.</p></div><div class="download__options"><a class="download-option" href="https://pub-3f73244fa5b0444eac9fcd6dbd2a3f25.r2.dev/releases/0.2.24/Airlock-macOS-beta.zip"><span><b>Download for Mac</b><small>macOS 14.2+ · beta 0.2.24</small></span><span aria-hidden="true">↗</span></a><a class="download-option" href="https://pub-3f73244fa5b0444eac9fcd6dbd2a3f25.r2.dev/releases/0.2.24/Airlock-Windows-x64-beta.zip"><span><b>Windows portable EXE</b><small>Windows 11 x64 · ZIP download · beta 0.2.24</small></span><span aria-hidden="true">↗</span></a><div class="download-option download-option--soon"><span><b>Windows installer (MSIX)</b><small>Installs like a regular Windows app</small></span><strong>Coming soon</strong></div></div></div></section>
+
+    <section class="pricing-section"><div class="shell pricing-section__inner"><div><span class="eyebrow">After the free trial</span><h2>$49, once.</h2><p>One license covers your network, for up to five different computers in any 24 hours. It doesn’t expire, and there’s no subscription.</p></div><div class="coming-soon"><span>CHECKOUT</span><strong>Coming soon</strong><small>Payment isn’t open yet.</small></div></div></section>
+
+    <section class="faq section-pad" id="questions"><div class="shell faq__grid"><div><p class="eyebrow">Questions</p><h2>Common questions.</h2></div><div id="faq-list"></div></div></section>
+  </main>
+
+  <footer class="footer"><div class="shell footer__inner"><a class="brand" href="#top"><span class="brand__symbol" aria-hidden="true"><i></i><i></i></span><span>airlock<span class="brand__period">.</span></span></a><p>One head. Several computers.</p><nav aria-label="Legal links"><a href="/impressum.html">Impressum</a><a href="mailto:contact@yoavschneider.dev">Contact</a></nav></div></footer>
+  <script src="widget.js"></script>
+  <script src="faq-data.js"></script>
+  <script src="scenarios.js"></script>
+</body>
+</html>

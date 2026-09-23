@@ -70,6 +70,11 @@ data:
           <p>It's a carpet. Touch it.</p>
           <time>2026</time>
         </a>
+        <a class="card" href="/projects/airlock/">
+          <h2>Airlock</h2>
+          <p>Shows when another work laptop needs your attention.</p>
+          <time>2026</time>
+        </a>
         <a class="card" href="/projects/frisk/">
           <h2>Frisk</h2>
           <p>Shows how old an ImmoScout24 listing really is.</p>
@@ -101,6 +106,7 @@ data:
     User-agent: *
     Disallow: /projects/frisk
     Disallow: /frisk/
+    Disallow: /projects/airlock
   impressum.html: |
     <!doctype html>
     <html lang="de">
