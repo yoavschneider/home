@@ -8,4 +8,4 @@ resources:
   - namespaces.yaml
   - repository.yaml
   - controller.yaml
-  - runners-oe.yaml
+  - runners.yaml
