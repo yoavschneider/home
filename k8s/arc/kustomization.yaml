@@ -1,0 +1,11 @@
+# GitHub Actions self-hosted runners (Actions Runner Controller), so CI does
+# not spend hosted-runner minutes. The controller is cluster-wide; each repo
+# that wants runners gets its own scale set in arc-runners, named after what
+# its workflows put in `runs-on:`.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespaces.yaml
+  - repository.yaml
+  - controller.yaml
+  - runners-oe.yaml
