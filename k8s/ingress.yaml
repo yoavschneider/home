@@ -309,14 +309,16 @@ spec:
         - name: landing-page
           port: 80
 ---
-# airlock: the page is served from this repo (../airlock), in the
-# yoavschneider-dev namespace next to the root landing page -- not in `oe`,
-# which is the relay's namespace and is owned by the Airlock repo's own k8s/.
+# airlock: like frisk/db-risk-factor/tell, the page ships as its own image
+# with a CI in its own repo (~/code/oe, namespace `oe`, already the relay's
+# namespace -- reusing it here means one Airlock namespace, not two similarly
+# named ones). The airlock-landing service is created by that repo's own
+# k8s/landing-page.yaml; this route just waits for it.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: strip-projects-airlock
-  namespace: yoavschneider-dev
+  namespace: oe
 spec:
   stripPrefix:
     prefixes:
@@ -328,7 +330,7 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: redirect-projects-airlock-slash
-  namespace: yoavschneider-dev
+  namespace: oe
 spec:
   redirectRegex:
     regex: ^https://yoavschneider\.dev/projects/airlock$
@@ -339,7 +341,7 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: yoavschneider-dev-airlock
-  namespace: yoavschneider-dev
+  namespace: oe
 spec:
   entryPoints:
     - websecure
