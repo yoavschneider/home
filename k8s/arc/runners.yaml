@@ -49,11 +49,14 @@ spec:
       namespace: arc-systems
       name: arc-gha-rs-controller
 ---
+# Its own namespace: the chart names the AutoscalingRunnerSet after
+# runnerScaleSetName, so two `k8s-runner` sets in one namespace are one object
+# both releases overwrite, and its listener flips between the repos.
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: k8s-runner-faxoff
-  namespace: arc-runners
+  namespace: arc-runners-faxoff
 spec:
   interval: 1h
   releaseName: k8s-runner-faxoff
