@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campfire — Yoav Schneider</title>
+<meta name="description" content="Campfire: an AI onboarding assistant for Slack and Notion that interviews teams, builds a knowledge graph, and answers new hires' questions. Product and architecture case study.">
+<style>
+  body {
+    margin: 0;
+    background: #fff;
+    color: #111;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    padding: 4rem 1.25rem 6rem;
+  }
+  main { max-width: 680px; width: 100%; }
+  a { color: #111; }
+  a.back { color: #666; text-decoration: none; font-size: 0.9rem; }
+  a.back:hover { text-decoration: underline; }
+  h1 { font-size: 2rem; margin: 1.5rem 0 0.25rem; }
+  .tagline { font-size: 1.15rem; color: #444; margin: 0 0 1rem; }
+  .meta { color: #888; font-size: 0.85rem; margin: 0 0 2.5rem; }
+  h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin: 3rem 0 0.75rem; }
+  h3 { font-size: 1rem; margin: 1.5rem 0 0.25rem; }
+  p { margin: 0 0 1rem; color: #333; }
+  ul, ol { padding-left: 1.25rem; margin: 0 0 1rem; color: #333; }
+  li { margin: 0 0 0.4rem; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; background: #f4f4f4; padding: 0.1em 0.35em; border-radius: 4px; }
+  .summary { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .summary ul { margin: 0; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin: 0 0 1rem; }
+  .stat { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem; }
+  .stat b { display: block; font-size: 1.5rem; line-height: 1.2; }
+  .stat span { color: #666; font-size: 0.85rem; }
+  .flow { counter-reset: step; list-style: none; padding: 0; }
+  .flow li { counter-increment: step; position: relative; padding-left: 2.25rem; margin-bottom: 1rem; }
+  .flow li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0.1rem;
+    width: 1.5rem; height: 1.5rem; border-radius: 50%;
+    background: #111; color: #fff; font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  figure { margin: 1.5rem 0; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { color: #888; font-size: 0.8rem; margin-top: 0.5rem; text-align: center; }
+  .diagram rect { fill: #fafafa; stroke: #d4d4d4; }
+  .diagram rect.core { fill: #111; stroke: #111; }
+  .diagram rect.ext { fill: #fff; stroke: #d4d4d4; stroke-dasharray: 4 3; }
+  .diagram text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #111; text-anchor: middle; }
+  .diagram .title { font-size: 14px; font-weight: 600; }
+  .diagram .sub { font-size: 11px; fill: #666; }
+  .diagram .core-t { fill: #fff; }
+  .diagram .core-s { fill: #bbb; }
+  .diagram .edge { font-size: 10.5px; fill: #888; }
+  .diagram line { stroke: #999; stroke-width: 1.25; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+  .tags li { margin: 0; font-size: 0.8rem; border: 1px solid #e5e5e5; border-radius: 999px; padding: 0.15rem 0.65rem; color: #444; }
+  footer { margin-top: 4rem; color: #888; font-size: 0.85rem; }
+  footer a { color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; Yoav Schneider</a>
+
+  <h1>Campfire</h1>
+  <p class="tagline">An AI onboarding assistant that lives in Slack. Every new hire's questions make the docs a little better for the next one.</p>
+  <p class="meta">2026 · Product, architecture and code by me · Go, React, Claude, MongoDB, Kubernetes</p>
+
+  <div class="summary">
+    <ul>
+      <li>I built an AI product from scratch: <b>five Go services</b>, a React admin app, a marketing site and a fake Slack for testing, deployed to Kubernetes with CI/CD.</li>
+      <li>I designed a <b>tool-using Claude agent</b> that runs structured interviews in Slack, turns what people say into a <b>knowledge graph</b>, and writes and maintains Notion pages.</li>
+      <li>Development ran April to July 2026: <b>280 commits in about 12 weeks</b>, taken to an early-access stage.</li>
+    </ul>
+  </div>
+
+  <h2>The problem</h2>
+  <p>Most of what a new hire needs isn't written down. It's in people's heads and in old Slack threads. Every time someone joins, the team explains the same things again, and the answers disappear once the new hire has them. Onboarding tools track checklists. They don't capture that knowledge.</p>
+  <p>Campfire tries to capture it. Each onboarding should leave the documentation a bit better than it was before.</p>
+
+  <h2>How it works</h2>
+  <ol class="flow">
+    <li><b>Manager setup.</b> The manager chats with the bot in a Slack DM, whenever they have time. They cover who is joining, who's on the team, which topics matter and who owns each one, and what the first real tasks are. At the end, Campfire sets up a Notion workspace for the new hire.</li>
+    <li><b>Team interviews.</b> Campfire interviews each topic owner for about 10 minutes, in Slack, whenever it suits them. It asks about tools, docs, people, common mistakes and recent changes. It follows up on vague answers and reads back what it understood so the owner can confirm it.</li>
+    <li><b>Knowledge graph and board.</b> A background pipeline pulls people, tools, systems, processes, decisions and knowledge gaps out of each transcript. It then builds a personal Notion board for the new hire, with a welcome page and tasks to learn, do, watch and meet people about.</li>
+    <li><b>New-hire Q&amp;A.</b> The new hire asks questions in Slack. Campfire looks for the answer in the graph, then in linked docs, then in source systems. If none of those have it, Campfire routes the question to the right expert. It records the expert's answer, asks them to approve it, and saves it as a page, so the next hire won't need to ask.</li>
+  </ol>
+  <p>Over time, managers also get an overview of their team's knowledge: gaps in the documentation, questions that keep coming up, and single points of failure, meaning topics only one person knows.</p>
+
+  <h2>Architecture</h2>
+  <figure>
+    <svg class="diagram" viewBox="0 0 720 340" role="img" aria-label="Architecture: Slack connects over Socket Mode to the Slack connector, which feeds the API server running the Claude agent. The agent calls Anthropic models and a scoped MCP tool server that reads and writes the MongoDB knowledge graph. A Notion worker syncs the graph with Notion through a job queue. An admin UI talks to the API through a Cloudflare Tunnel.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="#999"/>
+        </marker>
+      </defs>
+
+      <!-- external systems -->
+      <rect class="ext" x="10" y="30" width="150" height="56" rx="10"/>
+      <text class="title" x="85" y="54">Slack</text>
+      <text class="sub" x="85" y="72">interviews · Q&amp;A</text>
+
+      <rect class="ext" x="10" y="150" width="150" height="56" rx="10"/>
+      <text class="title" x="85" y="174">Admin UI</text>
+      <text class="sub" x="85" y="192">React · graph viewer</text>
+
+      <rect class="ext" x="10" y="270" width="150" height="56" rx="10"/>
+      <text class="title" x="85" y="294">Notion</text>
+      <text class="sub" x="85" y="312">boards · pages</text>
+
+      <rect class="ext" x="560" y="30" width="150" height="56" rx="10"/>
+      <text class="title" x="635" y="54">Anthropic API</text>
+      <text class="sub" x="635" y="72">Sonnet · Haiku</text>
+
+      <!-- services -->
+      <rect x="285" y="30" width="150" height="56" rx="10"/>
+      <text class="title" x="360" y="54">slack-connector</text>
+      <text class="sub" x="360" y="72">thread routing</text>
+
+      <rect class="core" x="285" y="150" width="150" height="56" rx="10"/>
+      <text class="title core-t" x="360" y="174">api-server</text>
+      <text class="sub core-s" x="360" y="192">Claude agent runtime</text>
+
+      <rect x="285" y="270" width="150" height="56" rx="10"/>
+      <text class="title" x="360" y="294">notion-worker</text>
+      <text class="sub" x="360" y="312">two-way sync</text>
+
+      <rect x="560" y="150" width="150" height="56" rx="10"/>
+      <text class="title" x="635" y="174">mcp-server</text>
+      <text class="sub" x="635" y="192">76 scoped tools</text>
+
+      <rect x="560" y="270" width="150" height="56" rx="10"/>
+      <text class="title" x="635" y="294">MongoDB</text>
+      <text class="sub" x="635" y="312">knowledge graph</text>
+
+      <!-- edges -->
+      <line x1="160" y1="58" x2="283" y2="58" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="222" y="50">Socket Mode WS</text>
+
+      <line x1="160" y1="178" x2="283" y2="178" marker-end="url(#a)"/>
+      <text class="edge" x="222" y="170">CF Tunnel</text>
+
+      <line x1="160" y1="298" x2="283" y2="298" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="222" y="290">OAuth · API</text>
+
+      <line x1="360" y1="86" x2="360" y2="148" marker-start="url(#a)" marker-end="url(#a)"/>
+
+      <line x1="435" y1="164" x2="560" y2="72" marker-end="url(#a)"/>
+      <text class="edge" x="515" y="112">LLM calls</text>
+
+      <line x1="435" y1="178" x2="558" y2="178" marker-end="url(#a)"/>
+      <text class="edge" x="497" y="192">tool calls</text>
+
+      <line x1="635" y1="206" x2="635" y2="268" marker-end="url(#a)"/>
+
+      <line x1="435" y1="298" x2="558" y2="298" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="497" y="290">job queue</text>
+    </svg>
+    <figcaption>Dashed boxes are external systems. Everything else runs in its own Kubernetes deployment.</figcaption>
+  </figure>
+
+  <h3>Services</h3>
+  <ul>
+    <li><b>slack-connector</b> keeps a WebSocket open to Slack's Socket Mode, so the bot needs no public webhook endpoint. It maps each Slack thread to a conversation session.</li>
+    <li><b>api-server</b> handles about 145 REST routes, runs the Claude agent loop, and schedules interviews and the post-interview jobs.</li>
+    <li><b>mcp-server</b> is an MCP-style tool server with 76 tools. What the agent may call depends on the session type: a team interview can't use manager-only tools. Each session gets a short-lived signed token that limits it to its own tools.</li>
+    <li><b>notion-worker</b> syncs Notion in both directions, using a MongoDB-backed job queue and checkpoints. It has versioned migrations for 11+ Notion databases, so board layouts can change without breaking existing workspaces.</li>
+    <li><b>admin-ui</b> (React + Vite) shows the knowledge graph, interview transcripts, sync state, Claude token usage and agent errors.</li>
+  </ul>
+
+  <h3>The AI layer</h3>
+  <ul>
+    <li><b>Router, then specialist.</b> A router prompt sorts every new Slack thread into a type: manager setup, new-hire Q&amp;A, a general issue, or small talk. The thread then goes to a specialist agent with its own prompt and tool set. There are 13 prompts in total.</li>
+    <li><b>Right model for each job.</b> Claude Sonnet runs the conversations. Claude Haiku handles the cheaper work in the background: pulling facts out of transcripts, summaries and tool sub-calls.</li>
+    <li><b>Controlled costs.</b> Prompt caching is on for the system prompt and tool definitions. Each turn has a fixed tool budget, and a compact tool catalog lets the model fetch a tool's full schema only when it needs it. Token usage is tracked per customer.</li>
+    <li><b>Memory without huge contexts.</b> The agent keeps a short saved-context note that it rewrites every turn, plus only the last 10 messages. Long interviews therefore stay cheap and focused.</li>
+    <li><b>Graph extraction with dedup.</b> Before the analyzer writes anything, it searches the graph for an existing entry. As a result, "the deploy script", "deploy.sh" and "our release tool" end up as one node, not three.</li>
+    <li><b>Quiet failures.</b> When a tool call fails, the error goes to a private log that shows up in the admin UI. Users in Slack never see raw errors.</li>
+  </ul>
+
+  <h3>Data</h3>
+  <p>MongoDB is the source of truth. Every document has an organization ID, so one deployment serves many companies. Graph nodes (people, topics, tools, processes, tasks, knowledge gaps, questions) live in one collection per type. The 25+ relationship types (<code>owns</code>, <code>uses_tool</code>, <code>contact_for</code>, <code>blocks</code>, and so on) live in a separate <code>edges</code> collection with an index on each end. This makes traversal fast in both directions, and merging two duplicate nodes only means rewriting their edges. Redis is used for caching. Uploaded files go to Cloudflare R2, and text is extracted from PDFs and DOCX files so they can be searched.</p>
+
+  <h3>Testing: a fake Slack</h3>
+  <p>Testing a Slack bot against real Slack is slow and hard to repeat, so I built <b>fake-slack</b>, a TypeScript service that imitates Slack's Web API, Socket Mode and OAuth. It has a UI that can run several workspaces, and scripted AI personas can play the manager, the team members and the new hire. This let me run full onboarding cycles end to end, locally and in CI, without a real Slack workspace.</p>
+
+  <h3>Infrastructure</h3>
+  <p>Everything runs on Kubernetes, with Kustomize overlays for the dev, qa and prod environments. Traffic comes in through a Cloudflare Tunnel, so the cluster has no open ports. Security details:</p>
+  <ul>
+    <li>Slack and Notion connect over OAuth, and their tokens are encrypted at rest with AES-256.</li>
+    <li>Admins sign in with JWT sessions.</li>
+  </ul>
+  <p>GitHub Actions builds seven container images and deploys every push to the dev environment automatically. Promotion to qa and prod is manual. For local development, a single docker-compose file starts the whole stack.</p>
+
+  <h2>By the numbers</h2>
+  <div class="stats">
+    <div class="stat"><b>5</b><span>Go services</span></div>
+    <div class="stat"><b>~145</b><span>REST routes</span></div>
+    <div class="stat"><b>76</b><span>agent tools</span></div>
+    <div class="stat"><b>13</b><span>prompts</span></div>
+    <div class="stat"><b>25+</b><span>graph edge types</span></div>
+    <div class="stat"><b>280</b><span>commits in ~12 weeks</span></div>
+  </div>
+
+  <h2>Stack</h2>
+  <ul class="tags">
+    <li>Go</li><li>TypeScript</li><li>React</li><li>Vite</li><li>Anthropic Claude</li><li>MCP</li><li>MongoDB</li><li>Redis</li><li>Cloudflare R2</li><li>Cloudflare Tunnel</li><li>Kubernetes</li><li>Kustomize</li><li>Docker</li><li>GitHub Actions</li><li>Slack API</li><li>Notion API</li>
+  </ul>
+
+  <h2>What I learned</h2>
+  <p>The hard part was not getting the model to talk. It was building everything around it:</p>
+  <ul>
+    <li>deciding which tools each kind of conversation may use</li>
+    <li>keeping extracted knowledge free of duplicates</li>
+    <li>keeping costs predictable</li>
+    <li>failing quietly</li>
+    <li>testing the whole thing end to end</li>
+  </ul>
+  <p>The two things that paid off most were splitting the work between Sonnet and Haiku, and building a fake Slack early.</p>
+
+  <footer>
+    Questions about Campfire? <a href="mailto:contact@yoavschneider.dev">contact@yoavschneider.dev</a>
+  </footer>
+</main>
+</body>
+</html>

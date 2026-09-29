@@ -16,14 +16,14 @@
     padding: 4rem 1.5rem;
   }
   h1 { font-size: 1.75rem; margin: 0 0 0.25rem; }
-  .email { color: #666; margin: 0 0 3rem; }
+  .email { color: #666; margin: 0 0 2.5rem; }
   .email a { color: inherit; }
   .projects {
     display: flex;
     flex-wrap: wrap;
     gap: 1.25rem;
     justify-content: center;
-    max-width: 640px;
+    margin: 0 auto;
   }
   .card {
     display: block;
@@ -42,8 +42,11 @@
   .card h2 { margin: 0 0 0.4rem; font-size: 1.1rem; }
   .card p { margin: 0 0 0.6rem; color: #666; font-size: 0.9rem; }
   .card time { color: #aaa; font-size: 0.75rem; }
-  .card.soon { opacity: 0.5; cursor: default; }
-  .card.soon:hover { box-shadow: none; transform: none; }
+  .group { width: 100%; max-width: 820px; margin: 0 0 2.5rem; }
+  .group h3 {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #888; font-weight: 600; text-align: center; margin: 0 0 1rem;
+  }
   footer { margin-top: 3rem; }
   footer a { color: #999; font-size: 0.8rem; text-decoration: none; }
   footer a:hover { text-decoration: underline; }
@@ -56,43 +59,58 @@
     · <a href="https://www.linkedin.com/in/yoav-schneider/">LinkedIn</a>
   </p>
 
-  <div class="projects">
-    <a class="card" href="/projects/carpet/">
-      <h2>Carpet</h2>
-      <p>It's a carpet. Touch it.</p>
-      <time>2026</time>
-    </a>
-    <a class="card" href="/projects/airlock/">
-      <h2>Airlock</h2>
-      <p>Shows when another work laptop needs your attention.</p>
-      <time>2026</time>
-    </a>
-    <a class="card" href="/projects/frisk/">
-      <h2>Frisk</h2>
-      <p>Shows how old an ImmoScout24 listing really is.</p>
-      <time>2026</time>
-    </a>
-    <a class="card" href="/projects/db/">
-      <h2>DB +6</h2>
-      <p>Firefox plugin that shows estimated delay right on bahn.de.</p>
-      <time>2026</time>
-    </a>
-    <div class="card soon">
-      <h2>Tell</h2>
-      <p>Coming soon.</p>
-      <time>2026</time>
+  <section class="group">
+    <h3>Products</h3>
+    <div class="projects">
+      <a class="card" href="/projects/campfire/">
+        <h2>Campfire</h2>
+        <p>AI onboarding in Slack. How it works and how it's built.</p>
+        <time>2026</time>
+      </a>
+      <a class="card" href="https://faxoff.app">
+        <h2>FAX-OFF</h2>
+        <p>Turns your phone into an actual fax machine.</p>
+        <time>2026</time>
+      </a>
+      <a class="card" href="https://repoguide.dev">
+        <h2>RepoGuide</h2>
+        <p>Gives coding agents repo experience.</p>
+        <time>2026</time>
+      </a>
     </div>
-    <a class="card" href="https://repoguide.dev">
-      <h2>RepoGuide</h2>
-      <p>Gives coding agents repo experience.</p>
-      <time>2026</time>
-    </a>
-    <a class="card" href="https://ratsfashion.art">
-      <h2>RATS Fashion</h2>
-      <p>Random ass t-shirts.</p>
-      <time>2025</time>
-    </a>
-  </div>
+  </section>
+
+  <section class="group">
+    <h3>Browser tools</h3>
+    <div class="projects">
+      <a class="card" href="/projects/frisk/">
+        <h2>Frisk</h2>
+        <p>Shows how old an ImmoScout24 listing really is.</p>
+        <time>2026</time>
+      </a>
+      <a class="card" href="/projects/db/">
+        <h2>DB +6</h2>
+        <p>Firefox plugin that shows estimated delay right on bahn.de.</p>
+        <time>2026</time>
+      </a>
+    </div>
+  </section>
+
+  <section class="group">
+    <h3>Just for fun</h3>
+    <div class="projects">
+      <a class="card" href="/projects/carpet/">
+        <h2>Carpet</h2>
+        <p>It's a carpet. Touch it.</p>
+        <time>2026</time>
+      </a>
+      <a class="card" href="https://ratsfashion.art">
+        <h2>RATS Fashion</h2>
+        <p>Random ass t-shirts.</p>
+        <time>2025</time>
+      </a>
+    </div>
+  </section>
 
   <footer><a href="/impressum.html">Impressum</a></footer>
 </body>
