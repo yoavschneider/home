@@ -150,7 +150,8 @@ data:
       a.back:hover { text-decoration: underline; }
       h1 { font-size: 2rem; margin: 1.5rem 0 0.25rem; }
       .tagline { font-size: 1.15rem; color: #444; margin: 0 0 1rem; }
-      .meta { color: #888; font-size: 0.85rem; margin: 0 0 2.5rem; }
+      .meta { color: #888; font-size: 0.85rem; margin: 0 0 1.25rem; }
+      .note { background: #f7f7f7; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; color: #444; margin: 0 0 2rem; }
       h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin: 3rem 0 0.75rem; }
       h3 { font-size: 1rem; margin: 1.5rem 0 0.25rem; }
       p { margin: 0 0 1rem; color: #333; }
@@ -197,13 +198,14 @@ data:
 
       <h1>Campfire</h1>
       <p class="tagline">An AI onboarding assistant that lives in Slack. Every new hire's questions make the docs a little better for the next one.</p>
-      <p class="meta">2026 · Discontinued · Product, architecture and code by me · Go, React, Claude, MongoDB, Kubernetes</p>
+      <p class="meta">2026 · Product, architecture and code by me · UX and design by Shani Brazilai · Go, React, Claude, MongoDB, Kubernetes</p>
+      <p class="note"><b>Note:</b> I stopped working on Campfire after 10 discovery interviews with potential customers, found through LinkedIn. The market turned out to be too niche, and Anthropic released Claude for Slack around the same time.</p>
 
       <div class="summary">
         <ul>
           <li>I built an AI product from scratch: <b>five Go services</b>, a React admin app, a marketing site and a fake Slack for testing, deployed to Kubernetes with CI/CD.</li>
           <li>I designed a <b>tool-using Claude agent</b> that runs structured interviews in Slack, turns what people say into a <b>knowledge graph</b>, and writes and maintains Notion pages.</li>
-          <li>Development ran April to July 2026: <b>280 commits in about 12 weeks</b>. I stopped after 10 customer interviews, for reasons explained below.</li>
+          <li>Development ran April to July 2026: <b>280 commits in about 12 weeks</b>.</li>
         </ul>
       </div>
 
@@ -213,7 +215,7 @@ data:
 
       <h2>How it works</h2>
       <ol class="flow">
-        <li><b>Manager setup.</b> The manager chats with the bot in a Slack DM, whenever they have time. They cover who is joining, who's on the team, which topics matter and who owns each one, and what the first real tasks are. At the end, Campfire sets up a Notion workspace for the new hire.</li>
+        <li><b>Manager setup.</b> The manager chats with the bot in a Slack DM, whenever they have time. They cover who is joining, who's on the team, which topics matter and who owns each one, and what the first real tasks are. The manager can also dump existing documentation into the chat as files. Campfire reads them, pulls out topics, people, tools and processes, asks the manager to confirm them, and skips any questions the docs already answer. At the end, Campfire sets up a Notion workspace for the new hire.</li>
         <li><b>Team interviews.</b> Campfire interviews each topic owner for about 10 minutes, in Slack, whenever it suits them. It asks about tools, docs, people, common mistakes and recent changes. It follows up on vague answers and reads back what it understood so the owner can confirm it.</li>
         <li><b>Knowledge graph and board.</b> A background pipeline pulls people, tools, systems, processes, decisions and knowledge gaps out of each transcript. It then builds a personal Notion board for the new hire, with a welcome page and tasks to learn, do, watch and meet people about.</li>
         <li><b>New-hire Q&amp;A.</b> The new hire asks questions in Slack. Campfire looks for the answer in the graph, then in linked docs, then in source systems. If none of those have it, Campfire routes the question to the right expert. It records the expert's answer, asks them to approve it, and saves it as a page, so the next hire won't need to ask.</li>
@@ -370,14 +372,6 @@ data:
       <ul class="tags">
         <li>Go</li><li>TypeScript</li><li>React</li><li>Vite</li><li>Anthropic Claude</li><li>MCP</li><li>MongoDB</li><li>Redis</li><li>Cloudflare R2</li><li>Cloudflare Tunnel</li><li>Kubernetes</li><li>Kustomize</li><li>Docker</li><li>GitHub Actions</li><li>Slack API</li><li>Notion API</li>
       </ul>
-
-      <h2>Why I stopped</h2>
-      <p>I stopped after 10 discovery interviews with potential customers, whom I found through LinkedIn. There were two reasons:</p>
-      <ul>
-        <li><b>The market was too niche</b> to build a company on.</li>
-        <li><b>The platform caught up.</b> Around the same time, Anthropic released Claude for Slack. A general assistant that already sits in Slack and can read your docs covers much of the same ground.</li>
-      </ul>
-      <p>So I stopped development rather than keep building something that wouldn't stand out. The code and this write-up are what's left.</p>
 
       <h2>What I learned</h2>
       <p>The hard part was not getting the model to talk. It was building everything around it:</p>
