@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VHS Dreams — Yoav Schneider</title>
+<meta name="description" content="VHS Dreams: a beat-synced music video editor that cuts footage to a song and adds an analog VHS look. Product and architecture case study.">
+<style>
+  body {
+    margin: 0;
+    background: #fff;
+    color: #111;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    padding: 4rem 1.25rem 6rem;
+  }
+  main { max-width: 680px; width: 100%; }
+  a { color: #111; }
+  a.back { color: #666; text-decoration: none; font-size: 0.9rem; }
+  a.back:hover { text-decoration: underline; }
+  h1 { font-size: 2rem; margin: 1.5rem 0 0.25rem; }
+  .tagline { font-size: 1.15rem; color: #444; margin: 0 0 1rem; }
+  .meta { color: #888; font-size: 0.85rem; margin: 0 0 1.25rem; }
+  .note { background: #f7f7f7; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; color: #444; margin: 0 0 2rem; }
+  h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin: 3rem 0 0.75rem; }
+  h3 { font-size: 1rem; margin: 1.5rem 0 0.25rem; }
+  p { margin: 0 0 1rem; color: #333; }
+  ul, ol { padding-left: 1.25rem; margin: 0 0 1rem; color: #333; }
+  li { margin: 0 0 0.4rem; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; background: #f4f4f4; padding: 0.1em 0.35em; border-radius: 4px; }
+  .summary { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .summary ul { margin: 0; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin: 0 0 1rem; }
+  .stat { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem; }
+  .stat b { display: block; font-size: 1.5rem; line-height: 1.2; }
+  .stat span { color: #666; font-size: 0.85rem; }
+  .flow { counter-reset: step; list-style: none; padding: 0; }
+  .flow li { counter-increment: step; position: relative; padding-left: 2.25rem; margin-bottom: 1rem; }
+  .flow li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0.1rem;
+    width: 1.5rem; height: 1.5rem; border-radius: 50%;
+    background: #111; color: #fff; font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  figure { margin: 1.5rem 0; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { color: #888; font-size: 0.8rem; margin-top: 0.5rem; text-align: center; }
+  .diagram rect { fill: #fafafa; stroke: #d4d4d4; }
+  .diagram rect.core { fill: #111; stroke: #111; }
+  .diagram rect.ext { fill: #fff; stroke: #d4d4d4; stroke-dasharray: 4 3; }
+  .diagram text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #111; text-anchor: middle; }
+  .diagram .title { font-size: 14px; font-weight: 600; }
+  .diagram .sub { font-size: 11px; fill: #666; }
+  .diagram .core-t { fill: #fff; }
+  .diagram .core-s { fill: #bbb; }
+  .diagram .edge { font-size: 10.5px; fill: #888; }
+  .diagram line { stroke: #999; stroke-width: 1.25; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+  .tags li { margin: 0; font-size: 0.8rem; border: 1px solid #e5e5e5; border-radius: 999px; padding: 0.15rem 0.65rem; color: #444; }
+  footer { margin-top: 4rem; color: #888; font-size: 0.85rem; }
+  footer a { color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; Yoav Schneider</a>
+
+  <h1>VHS Dreams</h1>
+  <p class="tagline">A beat-synced music video editor. Upload a song and some footage, and it cuts the video to the music and gives it an analog VHS look.</p>
+  <p class="meta">2026 · Offline · Product, architecture and code by me · Go, Python, Next.js, FFmpeg, MongoDB, Redis, Kubernetes</p>
+  <p class="note"><b>Note:</b> VHS Dreams is offline. This page describes the code as of its last commit in July 2026.</p>
+
+  <div class="summary">
+    <ul>
+      <li>I built a full media product on my own in about five weeks: a <b>Go API</b>, a <b>Python media worker</b> and a <b>Next.js editor</b>, with Stripe payments, deployed to Kubernetes with CI/CD.</li>
+      <li>The hard part was making cuts land on the beat. Off-the-shelf beat tracking drifted over a long track, so I use it only to find the first downbeat and then build an <b>exact tempo grid</b> from there. Cut points come from <b>bar intensity and kick and frequency peaks</b>, and a scoring function matches each cut to a scene by its visual features.</li>
+      <li>Rendering runs as a <b>queue of small jobs</b> with heartbeats and recovery, so a crashed worker doesn't lose work. Exports encode in batches, add audio-driven effects, and run the same <b>ntsc-rs</b> analog filter that the browser previews through <b>WebAssembly</b>.</li>
+    </ul>
+  </div>
+
+  <h2>The problem</h2>
+  <p>Cutting a music video by hand is slow. You find the beats, pick a clip for every bar, trim it to length, and repeat that a few hundred times for one song. Most of that work is mechanical. The song already says where the cuts should go, and the footage already says which shots are calm and which are busy.</p>
+  <p>VHS Dreams does that mechanical part. It reads the song's tempo, bars and energy, splits the footage into short scenes, and builds a first cut. The user then edits that cut in a grid, picks an analog look, and exports an MP4.</p>
+
+  <h2>How it works</h2>
+  <ol class="flow">
+    <li><b>Add a song.</b> The user creates a project and uploads an audio file. The browser sends it straight to object storage with a presigned URL. The worker converts it to a standard WAV and then runs a chain of analysis jobs: tempo, the beat and bar grid, per-bar features and song parts, and kick and frequency-band peaks.</li>
+    <li><b>Add footage.</b> The user uploads videos from a computer, or from a phone by scanning a QR code. They can also search Internet Archive, NASA and Wikimedia Commons for public-domain clips from inside the studio. Each video goes through a 14-step pipeline that finds scene cuts, scores each scene, and keeps up to 12 short clips with thumbnails.</li>
+    <li><b>Auto-cut.</b> When the audio analysis finishes, the project is cut automatically. Quiet bars become long tiles, intense bars get split on kicks and peaks, and every tile gets a scene whose visual features fit that moment in the song.</li>
+    <li><b>Edit.</b> The editor shows the song as a waveform with lanes for bars, beats and peaks, and the cut as a grid of tiles under it. The user can split, merge and drag tiles, swap scenes, set speed or reverse, and preview the whole thing in the browser with the analog filter on.</li>
+    <li><b>Export.</b> The user picks a quality (360p, 720p or 1080p), an analog preset and an effects set. The worker renders the MP4 and stores it, and the user downloads it from the project page.</li>
+  </ol>
+
+  <h2>Architecture</h2>
+  <figure>
+    <svg class="diagram" viewBox="0 0 720 340" role="img" aria-label="Architecture: the browser reaches the Next.js web app and the Go API through a Cloudflare Tunnel. The API stores projects, scenes and jobs in MongoDB and pushes jobs onto a Redis queue. The Python worker pops jobs from Redis, downloads clips from public archives, writes clips and exports to Cloudflare R2, and calls the API to run the auto-cut.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="#999"/>
+        </marker>
+      </defs>
+
+      <!-- left column -->
+      <rect class="ext" x="10" y="30" width="150" height="56" rx="10"/>
+      <text class="title" x="85" y="54">Browser</text>
+      <text class="sub" x="85" y="72">editor · WASM preview</text>
+
+      <rect class="ext" x="10" y="150" width="150" height="56" rx="10"/>
+      <text class="title" x="85" y="174">Cloudflare Tunnel</text>
+      <text class="sub" x="85" y="192">HTTPS ingress</text>
+
+      <rect class="ext" x="10" y="270" width="150" height="56" rx="10"/>
+      <text class="title" x="85" y="294">Clip archives</text>
+      <text class="sub" x="85" y="312">IA · NASA · Wikimedia</text>
+
+      <!-- middle column -->
+      <rect x="285" y="30" width="150" height="56" rx="10"/>
+      <text class="title" x="360" y="54">web</text>
+      <text class="sub" x="360" y="72">Next.js · React</text>
+
+      <rect class="core" x="285" y="150" width="150" height="56" rx="10"/>
+      <text class="title core-t" x="360" y="174">api</text>
+      <text class="sub core-s" x="360" y="192">Go · REST · auto-cut</text>
+
+      <rect x="285" y="270" width="150" height="56" rx="10"/>
+      <text class="title" x="360" y="294">worker</text>
+      <text class="sub" x="360" y="312">Python · FFmpeg</text>
+
+      <!-- right column -->
+      <rect x="560" y="30" width="150" height="56" rx="10"/>
+      <text class="title" x="635" y="54">MongoDB</text>
+      <text class="sub" x="635" y="72">projects · scenes · jobs</text>
+
+      <rect x="560" y="150" width="150" height="56" rx="10"/>
+      <text class="title" x="635" y="174">Redis</text>
+      <text class="sub" x="635" y="192">job queue · heartbeats</text>
+
+      <rect class="ext" x="560" y="270" width="150" height="56" rx="10"/>
+      <text class="title" x="635" y="294">Cloudflare R2</text>
+      <text class="sub" x="635" y="312">media · exports</text>
+
+      <!-- edges -->
+      <line x1="85" y1="86" x2="85" y2="148" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="112" y="121">HTTPS</text>
+
+      <line x1="160" y1="164" x2="296" y2="88" marker-end="url(#a)"/>
+      <text class="edge" x="208" y="120">pages</text>
+
+      <line x1="160" y1="178" x2="283" y2="178" marker-end="url(#a)"/>
+      <text class="edge" x="222" y="170">/api</text>
+
+      <line x1="160" y1="298" x2="283" y2="298" marker-end="url(#a)"/>
+      <text class="edge" x="222" y="290">download</text>
+
+      <line x1="435" y1="164" x2="560" y2="72" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="530" y="124">state</text>
+
+      <line x1="435" y1="178" x2="558" y2="178" marker-end="url(#a)"/>
+      <text class="edge" x="497" y="170">enqueue</text>
+
+      <line x1="360" y1="206" x2="360" y2="268" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="392" y="241">auto-cut</text>
+
+      <line x1="435" y1="284" x2="560" y2="192" marker-start="url(#a)" marker-end="url(#a)"/>
+      <text class="edge" x="530" y="250">BLPOP</text>
+
+      <line x1="435" y1="298" x2="558" y2="298" marker-end="url(#a)"/>
+      <text class="edge" x="497" y="290">clips · exports</text>
+    </svg>
+    <figcaption>Dashed boxes are external. The worker also writes job state to MongoDB, and the browser uploads songs straight to R2 with a presigned URL.</figcaption>
+  </figure>
+
+  <h3>Components</h3>
+  <ul>
+    <li><b>api</b> (Go, standard <code>net/http</code>, about 70 routes) owns users, projects, songs, videos, scenes, tiles, exports and plans. It creates jobs, enforces plan limits, builds the auto-cut, handles Stripe Checkout and its webhook, and runs a background cleanup that deletes expired exports and libraries.</li>
+    <li><b>worker</b> (Python 3.12) does all media work: audio analysis with librosa and SciPy, scene detection with PySceneDetect and OpenCV, and rendering with FFmpeg and ntsc-rs. It pulls jobs from Redis and runs export, video and audio jobs in separate thread pools, so a long export can't block a short audio job.</li>
+    <li><b>web</b> (Next.js 15, React 19) is the landing page, pricing and legal pages, the studio dashboard, the video library, and the editor. The editor uses WaveSurfer.js for the waveform and dnd-kit for dragging tiles.</li>
+    <li><b>MongoDB</b> holds durable state: users, projects, audio and video assets, scenes, tiles and job history. <b>Redis</b> holds the job queue, live job status and worker heartbeats. <b>Cloudflare R2</b> stores media.</li>
+  </ul>
+
+  <h3>Finding the beat grid</h3>
+  <p>Everything depends on the bar grid. If it is a little off, every cut feels late. I had two problems to solve.</p>
+  <ul>
+    <li><b>Tempo octave errors.</b> Beat trackers often report half or double the real tempo. The worker collects candidates from several estimates (librosa's tracker, the median and mean of per-frame tempo, and the top three histogram bins), adds the half and double of each, and scores every candidate. The score combines autocorrelation at that tempo, how strong the onsets are on the beats, and how much stronger they are on the beats than between them. A small bonus goes to tempos between 70 and 180 BPM. The user can override the result.</li>
+    <li><b>Drift.</b> librosa's beat tracker drifted out of line in the second half of some tracks. So the worker uses it only to find where the music starts and where the first downbeat is. For the downbeat, it tries all four phase offsets and picks the one with the strongest onsets on beat one. From there it builds a perfectly even grid at the chosen tempo. Pickup beats before the first downbeat are kept.</li>
+  </ul>
+  <p>Each bar then gets features: loudness (RMS), onset density, spectral flux, bass energy and brightness. They are normalized across the song and combined into an intensity score (<code>0.35·RMS + 0.25·onsets + 0.20·flux + 0.20·bass</code>) with a label from low to peak. SciPy's <code>find_peaks</code> marks peak bars and sudden rises, which the editor shows as drops. A separate job finds kick drums in the 40–120 Hz band with an adaptive threshold, plus peaks in four frequency bands.</p>
+
+  <h3>Picking scenes from footage</h3>
+  <p>A video goes through 14 small jobs, from import to finalize. Each job does one step, saves its result and queues the next one. The interesting steps:</p>
+  <ul>
+    <li><b>Detect.</b> PySceneDetect looks for cuts. If it finds too few usable scenes, it retries with lower thresholds (5, 3, 2, 1.5). A video with no cuts at all becomes one scene.</li>
+    <li><b>Filter.</b> Scenes under 1.5 seconds are dropped. Scenes over 30 seconds are split into chunks.</li>
+    <li><b>Score.</b> Each scene gets motion (Farneback optical flow), brightness, contrast, colorfulness, sharpness (Laplacian variance) and a frame-difference movement score. To keep this fast, all sample timestamps are sorted so one video reader only seeks forward, and frames are downscaled to 320×180 when read.</li>
+    <li><b>Select.</b> Scenes are ranked by <code>0.45·motion + 0.20·contrast + 0.20·colorfulness + 0.15·sharpness</code>. The top 12 are picked greedily, skipping any scene that starts within 3 seconds of one already picked or whose histogram looks too similar. That keeps the library varied instead of 12 shots of the same moment.</li>
+  </ul>
+  <p>The selected scenes are cut into short H.264 clips with thumbnails and saved as scene documents.</p>
+
+  <h3>The auto-cut</h3>
+  <p>The auto-cut runs in the Go API in two steps. When the audio analysis is done, the worker calls the API with a short-lived signed token.</p>
+  <ul>
+    <li><b>Where to cut.</b> Bars below 0.3 intensity are merged up to four at a time, and bars below 0.55 up to two. A drop bar gets one long tile across two bars. Bars at 0.42 or above are split into up to five cuts. Cut candidates are beats and the kick or band peaks the user chose, and peaks score higher than plain beats. Cuts must be at least a quarter bar apart. A fixed pattern based on the bar number adds or removes a cut now and then, so bars with the same intensity don't all get the same rhythm.</li>
+    <li><b>Which scene.</b> Each tile gets metrics: intensity, length, position in the song, momentum (the change from the previous tile) and four frequency bands. A mapping pairs each tile metric with a scene metric, for example "intensity ↔ motion", with a weight. A scene's score is how closely it matches across all pairs. Scenes lose points for being used often and for looking like the previous tile, and a small random term keeps re-runs different. The default mapping is shuffled, so "auto-assign" gives a new take every time.</li>
+    <li><b>Fit.</b> If a clip is shorter than its tile, it plays at half speed or loops. Some tiles randomly get double speed or reverse. When one scene fills several tiles in a row, every second one plays reversed.</li>
+  </ul>
+
+  <h3>Rendering the export</h3>
+  <ul>
+    <li><b>Batches.</b> A song can have hundreds of tiles. One FFmpeg <code>filter_complex</code> with all of them would open too many files at once, so tiles are encoded in batches of 50. The batches are joined with the concat demuxer without re-encoding, and the song is mixed in at the end. Clip audio is dropped.</li>
+    <li><b>Effects.</b> There are 18 effects, such as punch zoom, camera shake, RGB split, glitch blocks, film grain and scan lines. Each one is tied to an audio feature: zooms follow bass energy, glitches follow onset density. Their strength scales with that feature in the tile's bar, from 40% in silence to 100% at full level. Every tile gets one grain or color effect as a base, and at most three effects in total. Effects are applied inside the same encode, not in a second pass.</li>
+    <li><b>Analog look.</b> The six presets (VHS, S-VHS, Betamax, composite, broadcast, heavy) are settings files for <a href="https://github.com/ntsc-rs/ntsc-rs">ntsc-rs</a>, an open-source NTSC and VHS simulator. The worker image builds it from source in a Rust build stage. An intensity slider scales the numeric settings linearly. If ntsc-rs fails, a pure-FFmpeg filter chain gives a similar look.</li>
+    <li><b>Preview.</b> The editor runs ntsc-rs compiled to WebAssembly on a canvas, frame by frame, so the preview shows roughly what the export will look like.</li>
+    <li><b>Quality.</b> Preview is 640×360, SD is 1280×720 and HD is 1920×1080, all at 25 fps. Exports over 64 MB are uploaded to R2 in parts.</li>
+  </ul>
+
+  <h3>A job queue that survives crashes</h3>
+  <p>Media jobs take minutes, and workers get restarted. The queue is a Redis list, and every job also has a document in MongoDB.</p>
+  <ul>
+    <li><b>Claiming.</b> A worker claims a job by updating its MongoDB document from <code>queued</code>. If the document is gone, for example because the user deleted the video mid-import, the job is dropped.</li>
+    <li><b>Heartbeats.</b> Each worker writes a heartbeat to Redis every 60 seconds. Every 30 seconds, workers look for running jobs whose worker has been silent for 150 seconds and put them back in the queue. A second check, which reads only MongoDB, covers the case where Redis lost the job-to-worker map.</li>
+    <li><b>Stalled jobs.</b> A job that is "queued" in MongoDB but missing from Redis is re-queued, at most three times. After that it fails with a clear error instead of looping.</li>
+    <li><b>Ordering.</b> Follow-up jobs go to the front of the queue and new jobs to the back, so pipelines that already started finish before new ones begin.</li>
+    <li><b>Fair exports.</b> If a user already has as many exports running as their plan allows, the worker puts the job back in the queue with a "waiting for a slot" message. Other users' exports keep running.</li>
+  </ul>
+
+  <h3>Plans and limits</h3>
+  <p>There are three plans: Free, a Day Pass and a Week pass, bought through Stripe Checkout. Plans differ in exports per day or week, parallel exports, maximum video length (10 or 30 minutes), scene library size and how long files are kept. The API checks the limits before it queues anything. An export that is too long is trimmed and marked as trimmed, not refused. A background job deletes expired exports and libraries and moves expired passes back to Free.</p>
+
+  <h3>Problems in production</h3>
+  <ul>
+    <li><b>Upload size.</b> Cloudflare caps request bodies at 100 MB, so large uploads failed. Songs now go straight from the browser to R2 with a presigned PUT, with a normal upload as fallback.</li>
+    <li><b>Exports taking the site down.</b> FFmpeg used every core it could get. I capped it at four threads and added CPU and memory limits to the pods. The workers also run on their own node.</li>
+    <li><b>YouTube import.</b> I first imported footage from YouTube, then removed it and switched to public-domain archives, which have no licensing issues.</li>
+    <li><b>Duplicate imports.</b> Double clicks started the same import twice. The API now ignores an import whose source is already queued for that user, and caps each user at 10 imports at a time.</li>
+  </ul>
+
+  <h3>Infrastructure</h3>
+  <p>Everything runs in one Kubernetes namespace. The API, web app, worker, MongoDB 7 and Redis 7 are deployments, and MongoDB and Redis keep their data on persistent volumes. Two worker replicas run on a separate node and share a cache folder, so a source video is downloaded once and reused by later jobs.</p>
+  <ul>
+    <li><b>Ingress:</b> a <code>cloudflared</code> pod connects to a Cloudflare Tunnel, so the cluster has no public ports. The tunnel can't rewrite paths, so a small nginx proxy strips the <code>/api</code> prefix before requests reach the Go API.</li>
+    <li><b>Deploys:</b> every push to <code>main</code> makes GitHub Actions build the three images for arm64 on an arm runner and push them to GHCR. The next job applies the manifests, sets the new image tags and waits for the rollouts.</li>
+    <li><b>Security:</b> email and password or Google sign-in, with JWT sessions. Cloudflare Turnstile protects sign-up and login. Secrets live in Kubernetes Secrets.</li>
+    <li><b>Local development:</b> one docker-compose file starts the whole stack with local file storage instead of R2. Worker tests run inside the worker's Docker image.</li>
+  </ul>
+
+  <h2>By the numbers</h2>
+  <div class="stats">
+    <div class="stat"><b>~70</b><span>API routes</span></div>
+    <div class="stat"><b>14</b><span>video pipeline stages</span></div>
+    <div class="stat"><b>5</b><span>audio analysis jobs</span></div>
+    <div class="stat"><b>18</b><span>audio-driven effects</span></div>
+    <div class="stat"><b>6</b><span>analog presets</span></div>
+    <div class="stat"><b>55</b><span>Go and Python tests</span></div>
+  </div>
+
+  <h2>Stack</h2>
+  <ul class="tags">
+    <li>Go</li><li>Python</li><li>librosa</li><li>NumPy</li><li>SciPy</li><li>OpenCV</li><li>PySceneDetect</li><li>FFmpeg</li><li>ntsc-rs</li><li>WebAssembly</li><li>Next.js</li><li>React</li><li>WaveSurfer.js</li><li>dnd-kit</li><li>MongoDB</li><li>Redis</li><li>Cloudflare R2</li><li>Cloudflare Tunnel</li><li>Turnstile</li><li>Stripe</li><li>Google OAuth</li><li>Docker</li><li>Kubernetes</li><li>GitHub Actions</li><li>GHCR</li>
+  </ul>
+
+  <footer>
+    Questions about VHS Dreams? <a href="mailto:contact@yoavschneider.dev">contact@yoavschneider.dev</a>
+  </footer>
+</main>
+</body>
+</html>
