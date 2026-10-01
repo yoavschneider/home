@@ -718,7 +718,7 @@ data:
 
       <h1>RepoGuide</h1>
       <p class="tagline">Coding agents start every task from zero. RepoGuide learns from past agent sessions in a repo and gives the next agent a short briefing before it starts searching.</p>
-      <p class="meta">2026 · Public beta · Product, architecture and code by me · Go, React, Claude, MCP, MongoDB, Kubernetes · <a href="https://repoguide.dev">repoguide.dev</a></p>
+      <p class="meta">2026 · Public beta · Product, architecture and code by me · Go, React, Claude, MCP, MongoDB, Kubernetes · <a href="https://repoguide.dev">repoguide.dev</a> · <a href="https://github.com/repoguide-dev">GitHub</a></p>
 
       <div class="summary">
         <ul>
@@ -911,6 +911,15 @@ data:
         <div class="stat"><b>108</b><span>benchmark runs</span></div>
         <div class="stat"><b>−32%</b><span>input tokens</span></div>
       </div>
+
+      <h2>Source on GitHub</h2>
+      <p>The parts that run on the developer's machine are public:</p>
+      <ul>
+        <li><a href="https://github.com/repoguide-dev/repoguide-cli">repoguide-cli</a>: the CLI, session parsers, local index and MCP server</li>
+        <li><a href="https://github.com/repoguide-dev/repoguide-core">repoguide-core</a>: the shared Go contracts and models</li>
+        <li><a href="https://github.com/repoguide-dev/repoguide-benchmark">repoguide-benchmark</a>: the benchmark harness and results (MIT)</li>
+      </ul>
+      <p>The backend and web app are private.</p>
 
       <h2>Stack</h2>
       <ul class="tags">
