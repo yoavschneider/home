@@ -184,8 +184,38 @@
     <li><b>Quiet failures.</b> When a tool call fails, the error goes to a private log that shows up in the admin UI. Users in Slack never see raw errors.</li>
   </ul>
 
+  <h3>Reading files and docs</h3>
+  <p>People don't only talk to Campfire, they also hand it things: a manager drops an onboarding checklist PDF into the setup chat, or an expert shares a link to a Confluence page in the middle of an interview.</p>
+  <ul>
+    <li><b>Files shared in Slack</b> are downloaded and attached to the conversation. Text is extracted from PDF, DOCX, DOC, TXT, Markdown and CSV.</li>
+    <li><b>The agent reads files through tools.</b> <code>list_files</code> shows what's attached. <code>summarize_file</code> sends the text to Haiku and returns a short summary. The agent can pass a <i>focus</i> ("just the deploy steps"), and summaries are cached, keyed on the file's content hash. <code>get_file</code> returns the full text, and the agent only uses it when it needs exact wording.</li>
+    <li><b>Linked docs</b> work the same way. <code>find_in_docs</code> searches the connected sources (Notion, Confluence), <code>fetch_linked_doc_summary</code> returns a cached summary, and <code>read_doc</code> pages through the original text.</li>
+  </ul>
+  <p>The pattern is always cheapest first. The expensive Sonnet conversation gets a compact summary, not a 40-page PDF. It goes back to the raw text only when the summary isn't enough.</p>
+
+  <h3>Key MCP tools</h3>
+  <p>The agent's 76 tools are grouped by job. These are the ones that matter most:</p>
+  <ul>
+    <li><b>Graph:</b> <code>search_graph</code>, <code>get_topic_bundle</code> (a topic plus its neighbours and owner, in one call), <code>get_related</code>, <code>save_graph_observations</code>, <code>link_entities</code></li>
+    <li><b>Files and docs:</b> <code>list_files</code>, <code>summarize_file</code>, <code>get_file</code>, <code>find_in_docs</code>, <code>fetch_linked_doc_summary</code>, <code>read_doc</code>, <code>check_doc</code></li>
+    <li><b>Onboarding flow:</b> <code>setup_team</code>, <code>save_topic</code>, <code>schedule_interviews</code>, <code>finalize_setup</code>, <code>end_interview</code></li>
+    <li><b>Q&amp;A and gaps:</b> <code>create_knowledge_gap</code>, <code>start_question_thread</code> (pulls the right expert into a thread), <code>record_answer_feedback</code></li>
+    <li><b>Notion pages:</b> <code>write_page</code>, <code>patch_page</code>, <code>edit_page</code>, <code>summarize_page</code>, plus a set of tools for the new hire's dashboard</li>
+    <li><b>Memory:</b> <code>get_context</code>, <code>save_context</code></li>
+  </ul>
+
+  <h3>The knowledge graph</h3>
+  <p>Everything Campfire learns is stored as nodes and edges. Node types:</p>
+  <ul>
+    <li><b>People and structure:</b> people, roles, companies</li>
+    <li><b>What the team works with:</b> tools, systems, processes, projects, features, concepts</li>
+    <li><b>Onboarding:</b> topics, tasks, interviews, documents</li>
+    <li><b>What's missing:</b> knowledge gaps (with where they came from, a confidence score and how they were resolved), questions new hires asked, and feedback</li>
+  </ul>
+  <p>Edges connect them with 25+ typed relationships. Some examples: <i>Anna</i> <code>owns</code> <i>Deployments</i>, <i>Deployments</i> <code>uses_tool</code> <i>ArgoCD</i>, <i>Ben</i> <code>contact_for</code> <i>Billing</i>, <i>Releases</i> <code>documented_in</code> <i>the release guide</i>, <i>the release guide</i> <code>contradicts</code> <i>what Ben said in his interview</i>, and <i>the new hire</i> <code>struggled_with</code> <i>local setup</i>. This is what lets Campfire answer "who do I ask about X?", notice when a doc is out of date, and find topics only one person knows.</p>
+
   <h3>Data</h3>
-  <p>MongoDB is the source of truth. Every document has an organization ID, so one deployment serves many companies. Graph nodes (people, topics, tools, processes, tasks, knowledge gaps, questions) live in one collection per type. The 25+ relationship types (<code>owns</code>, <code>uses_tool</code>, <code>contact_for</code>, <code>blocks</code>, and so on) live in a separate <code>edges</code> collection with an index on each end. This makes traversal fast in both directions, and merging two duplicate nodes only means rewriting their edges. Redis is used for caching. Uploaded files go to Cloudflare R2, and text is extracted from PDFs and DOCX files so they can be searched.</p>
+  <p>MongoDB is the source of truth. Every document has an organization ID, so one deployment serves many companies. Graph nodes live in one collection per type. The relationship types (<code>owns</code>, <code>uses_tool</code>, <code>contact_for</code>, <code>blocks</code>, and so on) live in a separate <code>edges</code> collection with an index on each end. This makes traversal fast in both directions, and merging two duplicate nodes only means rewriting their edges. Redis is used for caching. Uploaded files go to Cloudflare R2, and text is extracted from PDFs and DOCX files so they can be searched.</p>
 
   <h3>Testing: a fake Slack</h3>
   <p>Testing a Slack bot against real Slack is slow and hard to repeat, so I built <b>fake-slack</b>, a TypeScript service that imitates Slack's Web API, Socket Mode and OAuth. It has a UI that can run several workspaces, and scripted AI personas can play the manager, the team members and the new hire. This let me run full onboarding cycles end to end, locally and in CI, without a real Slack workspace.</p>
@@ -222,7 +252,6 @@
     <li>failing quietly</li>
     <li>testing the whole thing end to end</li>
   </ul>
-  <p>The two things that paid off most were splitting the work between Sonnet and Haiku, and building a fake Slack early.</p>
 
   <footer>
     Questions about Campfire? <a href="mailto:contact@yoavschneider.dev">contact@yoavschneider.dev</a>
