@@ -91,11 +91,16 @@ data:
             <p>Turns your phone into an actual fax machine.</p>
             <time>2026</time>
           </a>
-          <a class="card" href="https://repoguide.dev">
-            <h2>RepoGuide</h2>
-            <p>Gives coding agents repo experience.</p>
-            <time>2026</time>
-          </a>
+          <div class="card">
+            <a class="card-main" href="https://repoguide.dev">
+              <h2>RepoGuide</h2>
+              <p>Gives coding agents repo experience.</p>
+            </a>
+            <div class="card-foot">
+              <time>2026</time>
+              <a class="card-link" href="/projects/repoguide/">Technical &rarr;</a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -640,6 +645,284 @@ data:
     </main>
     </body>
     </html>
+  repoguide.html: |
+    <!doctype html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RepoGuide — Yoav Schneider</title>
+    <meta name="description" content="RepoGuide: a CLI and MCP server that learns from past coding-agent sessions in a repo and briefs the next agent before it starts searching. Product, architecture and benchmark case study.">
+    <style>
+      body {
+        margin: 0;
+        background: #fff;
+        color: #111;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        display: flex;
+        justify-content: center;
+        padding: 4rem 1.25rem 6rem;
+      }
+      main { max-width: 680px; width: 100%; }
+      a { color: #111; }
+      a.back { color: #666; text-decoration: none; font-size: 0.9rem; }
+      a.back:hover { text-decoration: underline; }
+      h1 { font-size: 2rem; margin: 1.5rem 0 0.25rem; }
+      .tagline { font-size: 1.15rem; color: #444; margin: 0 0 1rem; }
+      .meta { color: #888; font-size: 0.85rem; margin: 0 0 1.25rem; }
+      .note { background: #f7f7f7; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; color: #444; margin: 0 0 2rem; }
+      h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin: 3rem 0 0.75rem; }
+      h3 { font-size: 1rem; margin: 1.5rem 0 0.25rem; }
+      p { margin: 0 0 1rem; color: #333; }
+      ul, ol { padding-left: 1.25rem; margin: 0 0 1rem; color: #333; }
+      li { margin: 0 0 0.4rem; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; background: #f4f4f4; padding: 0.1em 0.35em; border-radius: 4px; }
+      .summary { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem 1.5rem; }
+      .summary ul { margin: 0; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin: 0 0 1rem; }
+      .stat { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem; }
+      .stat b { display: block; font-size: 1.5rem; line-height: 1.2; }
+      .stat span { color: #666; font-size: 0.85rem; }
+      .flow { counter-reset: step; list-style: none; padding: 0; }
+      .flow li { counter-increment: step; position: relative; padding-left: 2.25rem; margin-bottom: 1rem; }
+      .flow li::before {
+        content: counter(step);
+        position: absolute; left: 0; top: 0.1rem;
+        width: 1.5rem; height: 1.5rem; border-radius: 50%;
+        background: #111; color: #fff; font-size: 0.8rem; font-weight: 600;
+        display: flex; align-items: center; justify-content: center;
+      }
+      figure { margin: 1.5rem 0; }
+      figure svg { width: 100%; height: auto; display: block; }
+      figcaption { color: #888; font-size: 0.8rem; margin-top: 0.5rem; text-align: center; }
+      .diagram rect { fill: #fafafa; stroke: #d4d4d4; }
+      .diagram rect.core { fill: #111; stroke: #111; }
+      .diagram rect.ext { fill: #fff; stroke: #d4d4d4; stroke-dasharray: 4 3; }
+      .diagram text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #111; text-anchor: middle; }
+      .diagram .title { font-size: 14px; font-weight: 600; }
+      .diagram .sub { font-size: 11px; fill: #666; }
+      .diagram .core-t { fill: #fff; }
+      .diagram .core-s { fill: #bbb; }
+      .diagram .edge { font-size: 10.5px; fill: #888; }
+      .diagram line { stroke: #999; stroke-width: 1.25; }
+      .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+      .tags li { margin: 0; font-size: 0.8rem; border: 1px solid #e5e5e5; border-radius: 999px; padding: 0.15rem 0.65rem; color: #444; }
+      footer { margin-top: 4rem; color: #888; font-size: 0.85rem; }
+      footer a { color: #666; }
+    </style>
+    </head>
+    <body>
+    <main>
+      <a class="back" href="/">&larr; Yoav Schneider</a>
+
+      <h1>RepoGuide</h1>
+      <p class="tagline">Coding agents start every task from zero. RepoGuide learns from past agent sessions in a repo and gives the next agent a short briefing before it starts searching.</p>
+      <p class="meta">2026 · Public beta · Product, architecture and code by me · Go, React, Claude, MCP, MongoDB, Kubernetes · <a href="https://repoguide.dev">repoguide.dev</a></p>
+
+      <div class="summary">
+        <ul>
+          <li>I built a developer tool on my own: a <b>Go CLI with a built-in MCP server</b>, a Go backend, a React web app, a shared Go module and a benchmark harness. That's about <b>69,000 lines of Go</b>. The CLI ships through Homebrew, signed and notarized for macOS.</li>
+          <li>The core is a <b>mostly deterministic retrieval pipeline</b>. It parses session logs from seven coding agents, mines which files get read and edited together, and builds an evidence-backed briefing for the current task. Claude only routes the task and picks from candidate IDs. It never writes the advice.</li>
+          <li>I measured it with a <b>reproducible benchmark</b> (108 agent runs): <b>32% fewer input tokens</b> on average with the same 94% success rate, but only 4% lower cost. About <b>300 commits</b> between July and August 2026.</li>
+        </ul>
+      </div>
+
+      <h2>The problem</h2>
+      <p>A coding agent like Claude Code or Codex knows nothing about your repo when a task starts. It greps, opens files, guesses, opens more files, and only then makes its first edit. The next session does the same search again, even when yesterday's session already found the right files, hit the same dead end and learned which test catches the bug.</p>
+      <p>The usual fixes don't solve this. Code search tells the agent where code is, not which files mattered for this kind of change. RAG finds text that looks similar. A <code>CLAUDE.md</code> file is what someone wrote once, and it goes stale.</p>
+      <p>RepoGuide uses a different source: the agent sessions themselves. They record what was searched, read, edited and tested, and what failed. That is evidence of what actually worked in this repo.</p>
+
+      <h2>How it works</h2>
+      <ol class="flow">
+        <li><b>Setup.</b> <code>repoguide setup</code> finds the Git repos on the machine, initializes one, and registers the RepoGuide MCP server in every coding agent it detects: Claude Code, Codex, Cursor, OpenCode, GitHub Copilot and Gemini CLI. Cloud mode signs in to the hosted backend. <code>--offline</code> runs everything locally.</li>
+        <li><b>Ingest.</b> The CLI reads the agents' own session logs from disk and turns them into one common event stream: prompts, file reads, edits, searches, shell commands, test runs and token usage. Secrets are redacted. Prompts can be redacted too before anything leaves the machine.</li>
+        <li><b>Analyze.</b> The analysis step finds files that are read and edited together, which tests belong to which code, and which searches led nowhere. It groups the files into subsystems, and Claude Sonnet turns those groups into named <b>topics</b> (for example "checkout" or "order refunds"), each with start files, workflows, risks and tests.</li>
+        <li><b>Brief.</b> When a new task starts, the agent calls <code>repoguide_get_repo_experience</code> with the task. RepoGuide matches it to a topic, finds the past sessions that did similar work, and returns a compact package: where to start, what to avoid, which files usually change together, and how to validate the change.</li>
+        <li><b>Feedback.</b> At the end of the session, a hook nudges the agent to call <code>repoguide_record_feedback</code>: which advice helped, which was wrong, what was missing. Feedback moves each advice item's confidence up or down and can patch topics, so the experience improves with use instead of going stale.</li>
+      </ol>
+
+      <h2>Architecture</h2>
+      <figure>
+        <svg class="diagram" viewBox="0 0 720 340" role="img" aria-label="Architecture: the repoguide CLI reads agent session logs and git history, and serves coding agents over MCP on stdio. In cloud mode it uploads session events over HTTPS to the Go backend, which stores topics and sessions in MongoDB and calls Claude through the Anthropic API. A React web app talks to the same backend. In offline mode the CLI stores everything in SQLite.">
+          <defs>
+            <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#999"/>
+            </marker>
+          </defs>
+
+          <!-- external inputs -->
+          <rect class="ext" x="10" y="30" width="150" height="56" rx="10"/>
+          <text class="title" x="85" y="54">Session logs</text>
+          <text class="sub" x="85" y="72">7 agent formats</text>
+
+          <rect class="ext" x="10" y="150" width="150" height="56" rx="10"/>
+          <text class="title" x="85" y="174">Coding agent</text>
+          <text class="sub" x="85" y="192">Claude Code, Codex, &hellip;</text>
+
+          <rect class="ext" x="10" y="270" width="150" height="56" rx="10"/>
+          <text class="title" x="85" y="294">Git repo</text>
+          <text class="sub" x="85" y="312">files · renames</text>
+
+          <!-- middle column -->
+          <rect x="285" y="30" width="150" height="56" rx="10"/>
+          <text class="title" x="360" y="54">Web app</text>
+          <text class="sub" x="360" y="72">React · topic editor</text>
+
+          <rect class="core" x="285" y="150" width="150" height="56" rx="10"/>
+          <text class="title core-t" x="360" y="174">repoguide CLI</text>
+          <text class="sub core-s" x="360" y="192">Go · MCP server</text>
+
+          <rect x="285" y="270" width="150" height="56" rx="10"/>
+          <text class="title" x="360" y="294">SQLite</text>
+          <text class="sub" x="360" y="312">offline mode</text>
+
+          <!-- right column -->
+          <rect class="ext" x="560" y="30" width="150" height="56" rx="10"/>
+          <text class="title" x="635" y="54">Anthropic API</text>
+          <text class="sub" x="635" y="72">Sonnet · Haiku</text>
+
+          <rect x="560" y="150" width="150" height="56" rx="10"/>
+          <text class="title" x="635" y="174">backend</text>
+          <text class="sub" x="635" y="192">Go · analysis · jobs</text>
+
+          <rect x="560" y="270" width="150" height="56" rx="10"/>
+          <text class="title" x="635" y="294">MongoDB</text>
+          <text class="sub" x="635" y="312">topics · sessions</text>
+
+          <!-- edges -->
+          <line x1="160" y1="72" x2="296" y2="148" marker-end="url(#a)"/>
+          <text class="edge" x="200" y="122">parse</text>
+
+          <line x1="160" y1="178" x2="283" y2="178" marker-start="url(#a)" marker-end="url(#a)"/>
+          <text class="edge" x="222" y="170">MCP · stdio</text>
+
+          <line x1="160" y1="284" x2="296" y2="208" marker-end="url(#a)"/>
+          <text class="edge" x="196" y="246">git log</text>
+
+          <line x1="360" y1="206" x2="360" y2="268" marker-start="url(#a)" marker-end="url(#a)"/>
+
+          <line x1="435" y1="178" x2="558" y2="178" marker-start="url(#a)" marker-end="url(#a)"/>
+          <text class="edge" x="497" y="170">HTTPS</text>
+          <text class="edge" x="497" y="194">events · briefings</text>
+
+          <line x1="435" y1="72" x2="558" y2="160" marker-end="url(#a)"/>
+          <text class="edge" x="524" y="110">/api</text>
+
+          <line x1="635" y1="150" x2="635" y2="88" marker-end="url(#a)"/>
+          <text class="edge" x="672" y="123">LLM calls</text>
+
+          <line x1="635" y1="206" x2="635" y2="268" marker-start="url(#a)" marker-end="url(#a)"/>
+        </svg>
+        <figcaption>Dashed boxes are external. In offline mode the CLI does the backend's job itself, with SQLite and a local model.</figcaption>
+      </figure>
+
+      <h3>Components</h3>
+      <ul>
+        <li><b>repoguide CLI</b> (Go, Cobra, Bubble Tea) is what users install. It discovers repos, parses session logs, installs the MCP server and hooks, and runs the MCP server itself. In offline mode it also runs the whole analysis locally on pure-Go SQLite, with Claude reached through the <code>claude</code>, <code>codex</code> or <code>gemini</code> CLI the user is already logged into, or through an <code>ANTHROPIC_API_KEY</code>.</li>
+        <li><b>backend</b> (Go, standard <code>net/http</code>, about 65 routes) receives zipped session events, runs the analysis and the topic generation, answers MCP calls for cloud repos, and processes feedback in a job queue that resumes after restarts. It also handles teams, plans and limits, and an admin console.</li>
+        <li><b>Web app</b> (React, Vite, Tailwind) is the marketing site, the benchmark page and the dashboard. Users can browse their repos, sessions and topics, and edit or disable a topic entry by hand. Every entry keeps its provenance, so a human edit is recorded as one.</li>
+        <li><b>repoguide-core</b> is a small shared Go module with the domain models, the API contracts between CLI and backend, and the briefing builder. Both runtimes use the same code, so offline and cloud give the same answer for the same data.</li>
+      </ul>
+
+      <h3>Reading seven agents' session logs</h3>
+      <p>Every agent stores its history in its own format. RepoGuide has parsers for Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot CLI, Copilot in VS Code and OpenCode (including its SQLite store). Each parser maps tool calls to the same event types: a prompt, a read with its paths, a write, a search with its query, a shell command with its exit status. It also picks up the agents' own memory files for the repo, such as Claude's project memory and Codex memories.</p>
+      <p>Paths are normalized to the repo root, including repos nested inside a workspace. Before upload, <code>sanitizeEventLogForUpload</code> runs secret redaction over every text field, and with the privacy setting off it replaces prompts with <code>[redacted prompt]</code>. RepoGuide never uploads the repository itself.</p>
+
+      <h3>From sessions to topics</h3>
+      <p>The analysis (<code>BuildRepoAnalysis</code>) is plain counting, no model involved. For every pair of files it counts the sessions where they were read together, edited together, read one before editing the other, or touched in the same prompt. Each signal has a weight: co-edit 5, read-before-edit 4, same prompt 3, co-read 2, same session 0.5. The weighted count is divided by <code>sqrt(sessions(A) × sessions(B))</code>, so two files that are open in every session don't look related just because they're popular. Weak pairs are dropped. The rest form a graph whose connected components are split into groups of at most 12 files.</p>
+      <p>The same pass collects test signals (which test files and commands follow edits to which code), search discoverability (queries that led to a read, and queries that went nowhere) and repeated detours. Claude Sonnet then gets the candidate groups, with their prompts, commands and tests, and names them as topics. If the model call fails, a deterministic fallback still produces topics.</p>
+
+      <h3>Building the briefing</h3>
+      <p>The briefing for one task comes from <code>BuildTaskPackage</code> in the shared module:</p>
+      <ul>
+        <li><b>Find similar sessions.</b> Each past session that edited something is scored by its single best-matching prompt against the task, using token overlap divided by <code>sqrt(|task| × |prompt|)</code>, after stop words, stemming and a few synonym groups. It also has to touch the topic's files. The threshold is 0.30, and at most 20 sessions are kept.</li>
+        <li><b>Aggregate what they did.</b> A file counts as typical if at least half the matching sessions edited it. The order in which sessions edited files gives a workflow ("A and B are commonly edited together, 3/4 sessions"). Topic files that similar sessions rarely touched become "avoid" hints. Test commands that were actually run become validation advice. Commands that failed are not turned into advice.</li>
+        <li><b>Be honest about thin evidence.</b> Workflows and scope advice need at least two matching sessions. With fewer than three, the briefing says the pattern is tentative. With none, it falls back to the topic's curated guidance and labels it as such.</li>
+        <li><b>Keep it small.</b> A normal task gets at most 6 items and 2,400 characters. A cross-cutting task gets 9 items and 3,200 characters.</li>
+      </ul>
+      <p>Every advice item carries its evidence: the IDs of the sessions that support it, the support count and the population.</p>
+
+      <h3>The model picks, it doesn't write</h3>
+      <p>Claude Haiku is used twice per briefing, and both times its job is narrow.</p>
+      <ul>
+        <li><b>Topic routing</b> (<code>SelectTopic</code>) matches the task to a topic, with a calibrated confidence. Past feedback adds positive and negative routing examples. A task with fewer than three distinct words, or no strong match, gets a clarifying question and a list of candidate topics instead of a guess.</li>
+        <li><b>Advice selection</b> (<code>SelectAdvice</code>) gets the candidate items and returns only their IDs, grouped by category. The system prompt says it is "an evidence selector, not an advice author". The code enforces this: unknown IDs, wrong categories, duplicates and anything over budget are dropped. The JSON decoder rejects unknown fields. A start file is always kept. If the call fails, a deterministic selection is used.</li>
+      </ul>
+      <p>The advice text comes only from session history or curated topic data. The model can't invent a file path or a step.</p>
+
+      <h3>The feedback loop</h3>
+      <p>Feedback names helpful and unhelpful advice by stable ID, and adds free text about what was wrong or missing. Each item's confidence is a smoothed ratio: its session support acts as a prior with weight <code>total + 2</code>, and each helpful or unhelpful rating adds one observation. One bad rating can't wipe out an item backed by ten sessions, but repeated complaints will. Topic routing confidence moves the same way, by small steps. A 4–5 star rating closes 8% of the gap to 0.95, a 1–3 star rating 10% of the gap to 0.05.</p>
+      <p>Feedback is also classified by Haiku into actionable items. Then a patch job has Sonnet propose edits to the topic, or a new topic. An agent can propose one reusable "candidate rule" per session, but the rule only becomes guidance once later sessions or a developer back it up.</p>
+
+      <h3>Keeping file paths current</h3>
+      <p>Experience is useless if it points at a file that was moved last week. The CLI reads the repo's rename history (<code>git log --find-renames=90% --diff-filter=R</code>) and maps old paths to new ones. On every MCP call it also sends the list of files that exist on the repo's configured branch, and every path in the topic and the briefing is filtered against it.</p>
+      <p>That filter caused a bug once. Older CLIs didn't list files inside Git submodules, so filtering would have deleted every submodule path. The backend now reads the CLI version from a request header and skips the filter for clients that are too old. Skipping the filter makes the briefing a bit worse. Filtering with an incomplete list would make it wrong.</p>
+
+      <h3>How agents use it</h3>
+      <p>The CLI is its own MCP server. It speaks JSON-RPC over stdio, written by hand without an SDK, and exposes six tools:</p>
+      <ul>
+        <li><code>repoguide_get_repo_experience</code>: the main entry point. Task in, topic match and compact briefing out.</li>
+        <li><code>repoguide_list_topics</code>: candidate topics, for when the match is ambiguous.</li>
+        <li><code>repoguide_get_test_context</code>: which tests to start with for a topic.</li>
+        <li><code>repoguide_get_search_context</code>: reliable queries, ambiguous ones to avoid, and files that are hard to find by search.</li>
+        <li><code>repoguide_get_full_topic_context</code>: the full topic, only when the compact one isn't enough.</li>
+        <li><code>repoguide_record_feedback</code>: end-of-task feedback, with structured advice evaluation.</li>
+      </ul>
+      <p>Agents only use a tool when they're told to. In Claude Code, a <code>UserPromptSubmit</code> hook suggests <code>repoguide_get_repo_experience</code> on the first prompt of a session. A <code>Stop</code> hook nudges for feedback once, only if the session actually used RepoGuide. By default the hook asks the user before sending feedback, because feedback sends task metadata. Codex gets the same <code>Stop</code> hook, and Gemini CLI gets equivalent hooks. Where hooks aren't used, an instruction block in <code>CLAUDE.md</code> or <code>AGENTS.md</code> does the same job. Managed pre-commit and post-commit hooks strip that block from the index and mark the file <code>--skip-worktree</code>, so it never ends up in a commit or in <code>git status</code>.</p>
+
+      <h3>Measuring it on real repos</h3>
+      <p>Comparing sessions that used RepoGuide against sessions that didn't is misleading, because agents choose to call the tool more often on some kinds of task than on others. So the MCP server holds back the briefing in 20% of sessions by default. The choice comes from a SHA-256 hash of the session ID, so every call in one session gets the same answer. Held-back responses carry a marker that the session parser recognizes later. <code>repoguide stats</code> then compares the two groups by agent and by change size.</p>
+      <p>There is also a free local report (<code>curl -fsSL https://repoguide.dev/report.sh | sh</code>). It downloads a checksum-verified binary to a temporary folder and shows, for the user's own past sessions, how many files, searches, tool calls and tokens agents spent before their first edit. Nothing is uploaded.</p>
+
+      <h3>The benchmark</h3>
+      <p><a href="https://github.com/repoguide-dev/repoguide-benchmark">repoguide-benchmark</a> is a Python harness (standard library only) that runs locally, in Docker or as a Kubernetes Job. The method:</p>
+      <ul>
+        <li><b>Build.</b> An agent builds RoastCart, a small coffee-shop app (Go backend, React shop, React admin), through 42 small developer tasks. RepoGuide learns from exactly those sessions. The repo is snapshotted, so every later run starts from byte-identical state.</li>
+        <li><b>Evaluate.</b> 18 test tasks extend the subsystems the warmup built, for example "add q and category filters to the product listing API, following the admin order filter's conventions". Each task runs 3 times with RepoGuide and 3 times without it, each time on a fresh copy of the snapshot, with Claude Sonnet 5.</li>
+        <li><b>Grade.</b> Only mechanical checks, no LLM judge: the repo's test suites pass, the diff touches the right apps and matches task-specific patterns, and tests were added. A run where the RepoGuide arm never called the tool is marked invalid. The feedback tool is blocked during evaluation, so one test run can't teach the next.</li>
+      </ul>
+      <p>Results from the published run on 17 July 2026 (54 runs per arm, none invalid):</p>
+      <ul>
+        <li><b>Input tokens:</b> 16,222 → 11,041 on average, <b>32% fewer</b>. The best task saved 70%. Five of the 18 tasks used 2–10% more.</li>
+        <li><b>Success rate:</b> 94% in both arms (51 of 54). RepoGuide made the agent cheaper to run, not more correct.</li>
+        <li><b>Navigation:</b> tool calls 46.9 → 41.4, searches 7.4 → 5.0, files read before the first edit 7.9 → 7.4.</li>
+        <li><b>Cost:</b> $1.45 → $1.39 per task, only <b>4% cheaper</b>. Wall time was the same, 233 seconds.</li>
+      </ul>
+      <p>The cost result is the important caveat. Uncached input is only about 3% of a run's cost, and cache reads and output make up most of the bill, so a 32% cut in input tokens barely moves the price. The variance is also high: the standard deviation of input tokens is nearly as large as the mean, with only 3 repetitions per task, one model and one small, agent-built repo. The harness also has a second mode on a pinned Home Assistant checkout with fictional integrations, built to test a large real codebase, but I haven't published results from it.</p>
+
+      <h3>Infrastructure</h3>
+      <p>The cloud runs on a k3s cluster managed with Flux. The backend and web app are Kubernetes deployments, and MongoDB is a shared replica set in the same cluster. Traffic comes in through a Cloudflare Tunnel, and Traefik routes <code>/api/</code> to the backend and everything else to the web app. Certificates come from Let's Encrypt.</p>
+      <ul>
+        <li><b>Deploys:</b> pushing a <code>vX.Y.Z</code> tag makes GitHub Actions build both images, push them to GHCR, and commit the new tags into the Kubernetes manifests. Flux then applies that commit to the cluster. Nothing is deployed by hand.</li>
+        <li><b>CLI releases:</b> bumping a <code>VERSION</code> file tags the commit and runs GoReleaser. It builds macOS, Linux and Windows binaries without cgo, code-signs and notarizes the macOS builds, publishes them with checksums, and updates the Homebrew cask.</li>
+        <li><b>Auth:</b> the web app uses GitHub, GitLab and Google OAuth or email and password, with JWT sessions. The CLI signs in with a device-code flow. The CLI only talks to an allow-listed backend host and request paths.</li>
+        <li><b>Other:</b> transactional email goes through Cloudflare Email Sending. Secrets live in Kubernetes Secrets, never in the repos. For local development, one docker-compose file starts MongoDB, the backend and the web app.</li>
+      </ul>
+
+      <h2>By the numbers</h2>
+      <div class="stats">
+        <div class="stat"><b>~69k</b><span>lines of Go</span></div>
+        <div class="stat"><b>~350</b><span>Go tests</span></div>
+        <div class="stat"><b>7</b><span>session log formats</span></div>
+        <div class="stat"><b>6</b><span>MCP tools</span></div>
+        <div class="stat"><b>45</b><span>CLI releases</span></div>
+        <div class="stat"><b>~300</b><span>commits in 7 weeks</span></div>
+        <div class="stat"><b>108</b><span>benchmark runs</span></div>
+        <div class="stat"><b>−32%</b><span>input tokens</span></div>
+      </div>
+
+      <h2>Stack</h2>
+      <ul class="tags">
+        <li>Go</li><li>Cobra</li><li>Bubble Tea</li><li>SQLite</li><li>MCP</li><li>Anthropic Claude</li><li>React</li><li>Vite</li><li>Tailwind</li><li>MongoDB</li><li>Python</li><li>Kubernetes</li><li>k3s</li><li>Flux</li><li>Traefik</li><li>Cloudflare Tunnel</li><li>Docker</li><li>GitHub Actions</li><li>GoReleaser</li><li>Homebrew</li>
+      </ul>
+
+      <footer>
+        Questions about RepoGuide? <a href="mailto:contact@yoavschneider.dev">contact@yoavschneider.dev</a>
+      </footer>
+    </main>
+    </body>
+    </html>
   robots.txt: |
     # Crawlers only ever read this file at the domain root, so every path on
     # yoavschneider.dev has to be listed here, not in the project's own directory.
@@ -783,6 +1066,8 @@ spec:
                 path: impressum.html
               - key: robots.txt
                 path: robots.txt
+              - key: repoguide.html
+                path: projects/repoguide/index.html
               - key: flowgeo.html
                 path: projects/flowgeo/index.html
               - key: campfire.html
@@ -820,6 +1105,17 @@ spec:
   redirectRegex:
     regex: ^https://yoavschneider\.dev/projects/flowgeo$
     replacement: https://yoavschneider.dev/projects/flowgeo/
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-projects-repoguide-slash
+  namespace: yoavschneider-dev
+spec:
+  redirectRegex:
+    regex: ^https://yoavschneider\.dev/projects/repoguide$
+    replacement: https://yoavschneider.dev/projects/repoguide/
     permanent: true
 ---
 apiVersion: traefik.io/v1alpha1
@@ -866,6 +1162,18 @@ spec:
         - name: landing
           port: 80
     - match: Host(`yoavschneider.dev`) && Path(`/projects/flowgeo/`)
+      kind: Rule
+      services:
+        - name: landing
+          port: 80
+    - match: Host(`yoavschneider.dev`) && Path(`/projects/repoguide`)
+      kind: Rule
+      middlewares:
+        - name: redirect-projects-repoguide-slash
+      services:
+        - name: landing
+          port: 80
+    - match: Host(`yoavschneider.dev`) && Path(`/projects/repoguide/`)
       kind: Rule
       services:
         - name: landing
