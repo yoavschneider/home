@@ -197,13 +197,13 @@ data:
 
       <h1>Campfire</h1>
       <p class="tagline">An AI onboarding assistant that lives in Slack. Every new hire's questions make the docs a little better for the next one.</p>
-      <p class="meta">2026 · Product, architecture and code by me · Go, React, Claude, MongoDB, Kubernetes</p>
+      <p class="meta">2026 · Discontinued · Product, architecture and code by me · Go, React, Claude, MongoDB, Kubernetes</p>
 
       <div class="summary">
         <ul>
           <li>I built an AI product from scratch: <b>five Go services</b>, a React admin app, a marketing site and a fake Slack for testing, deployed to Kubernetes with CI/CD.</li>
           <li>I designed a <b>tool-using Claude agent</b> that runs structured interviews in Slack, turns what people say into a <b>knowledge graph</b>, and writes and maintains Notion pages.</li>
-          <li>Development ran April to July 2026: <b>280 commits in about 12 weeks</b>, taken to an early-access stage.</li>
+          <li>Development ran April to July 2026: <b>280 commits in about 12 weeks</b>. I stopped after 10 customer interviews, for reasons explained below.</li>
         </ul>
       </div>
 
@@ -370,6 +370,14 @@ data:
       <ul class="tags">
         <li>Go</li><li>TypeScript</li><li>React</li><li>Vite</li><li>Anthropic Claude</li><li>MCP</li><li>MongoDB</li><li>Redis</li><li>Cloudflare R2</li><li>Cloudflare Tunnel</li><li>Kubernetes</li><li>Kustomize</li><li>Docker</li><li>GitHub Actions</li><li>Slack API</li><li>Notion API</li>
       </ul>
+
+      <h2>Why I stopped</h2>
+      <p>I stopped after 10 discovery interviews with potential customers, whom I found through LinkedIn. There were two reasons:</p>
+      <ul>
+        <li><b>The market was too niche</b> to build a company on.</li>
+        <li><b>The platform caught up.</b> Around the same time, Anthropic released Claude for Slack. A general assistant that already sits in Slack and can read your docs covers much of the same ground.</li>
+      </ul>
+      <p>So I stopped development rather than keep building something that wouldn't stand out. The code and this write-up are what's left.</p>
 
       <h2>What I learned</h2>
       <p>The hard part was not getting the model to talk. It was building everything around it:</p>
