@@ -1,0 +1,16 @@
+{
+  "name": "traffic-report",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  // No public URL: the report contains traffic data. Preview locally with
+  // `npx wrangler dev --remote` and open http://localhost:8787.
+  "workers_dev": false,
+  "triggers": {
+    // Mondays 07:00 UTC, covering the previous Mon–Sun.
+    "crons": ["0 7 * * 1"]
+  },
+  "send_email": [
+    { "name": "EMAIL" }
+  ]
+  // Secret: CF_API_TOKEN, an API token with Zone → Analytics → Read on all zones.
+}
