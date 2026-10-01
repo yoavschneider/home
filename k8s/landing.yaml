@@ -52,6 +52,9 @@ data:
       .card h2 { margin: 0 0 0.4rem; font-size: 1.1rem; }
       .card p { margin: 0 0 0.6rem; color: #666; font-size: 0.9rem; }
       .card time { color: #aaa; font-size: 0.75rem; }
+      .meta-row { display: inline-flex; align-items: center; gap: 0.5rem; }
+      .status { font-size: 0.7rem; border-radius: 999px; padding: 0.05rem 0.5rem; border: 1px solid #e5e5e5; color: #888; }
+      .status.live { color: #1a7f37; border-color: #b7e1c1; background: #f0faf2; }
       .card-main { display: block; color: inherit; text-decoration: none; }
       .card-foot { display: flex; justify-content: space-between; align-items: baseline; }
       .card-link { color: #666; font-size: 0.8rem; text-decoration: none; }
@@ -79,17 +82,17 @@ data:
           <a class="card" href="/projects/campfire/">
             <h2>Campfire</h2>
             <p>AI onboarding in Slack. How it works and how it's built.</p>
-            <time>2026</time>
+            <span class="meta-row"><time>2026</time><span class="status off">Discontinued after discovery</span></span>
           </a>
           <a class="card" href="/projects/flowgeo/">
             <h2>FlowGeo</h2>
             <p>Shows how AI chatbots rank your brand.</p>
-            <time>2025</time>
+            <span class="meta-row"><time>2025</time><span class="status off">Offline</span></span>
           </a>
           <a class="card" href="https://faxoff.app">
             <h2>FAX-OFF</h2>
             <p>Turns your phone into an actual fax machine.</p>
-            <time>2026</time>
+            <span class="meta-row"><time>2026</time><span class="status live">Live</span></span>
           </a>
           <div class="card">
             <a class="card-main" href="https://repoguide.dev">
@@ -97,7 +100,7 @@ data:
               <p>Gives coding agents repo experience.</p>
             </a>
             <div class="card-foot">
-              <time>2026</time>
+              <span class="meta-row"><time>2026</time><span class="status live">Public beta</span></span>
               <a class="card-link" href="/projects/repoguide/">Technical &rarr;</a>
             </div>
           </div>
@@ -110,12 +113,12 @@ data:
           <a class="card" href="/projects/frisk/">
             <h2>Frisk</h2>
             <p>Shows how old an ImmoScout24 listing really is.</p>
-            <time>2026</time>
+            <span class="meta-row"><time>2026</time><span class="status off">Coming soon</span></span>
           </a>
           <a class="card" href="/projects/db/">
             <h2>DB +6</h2>
             <p>Firefox plugin that shows estimated delay right on bahn.de.</p>
-            <time>2026</time>
+            <span class="meta-row"><time>2026</time><span class="status live">Live</span></span>
           </a>
         </div>
       </section>
@@ -126,12 +129,12 @@ data:
           <a class="card" href="/projects/carpet/">
             <h2>Carpet</h2>
             <p>It's a carpet. Touch it.</p>
-            <time>2026</time>
+            <span class="meta-row"><time>2026</time><span class="status live">Live</span></span>
           </a>
           <a class="card" href="https://ratsfashion.art">
             <h2>RATS Fashion</h2>
             <p>Random ass t-shirts.</p>
-            <time>2025</time>
+            <span class="meta-row"><time>2025</time><span class="status live">Live</span></span>
           </a>
         </div>
       </section>
@@ -219,7 +222,6 @@ data:
         <ul>
           <li>I built an AI product from scratch: <b>five Go services</b>, a React admin app, a marketing site and a fake Slack for testing, deployed to Kubernetes with CI/CD.</li>
           <li>I designed a <b>tool-using Claude agent</b> that runs structured interviews in Slack, turns what people say into a <b>knowledge graph</b>, and writes and maintains Notion pages.</li>
-          <li>Development ran April to July 2026: <b>280 commits in about 12 weeks</b>.</li>
         </ul>
       </div>
 
@@ -379,7 +381,6 @@ data:
         <div class="stat"><b>76</b><span>agent tools</span></div>
         <div class="stat"><b>13</b><span>prompts</span></div>
         <div class="stat"><b>25+</b><span>graph edge types</span></div>
-        <div class="stat"><b>280</b><span>commits in ~12 weeks</span></div>
       </div>
 
       <h2>Stack</h2>
@@ -471,7 +472,6 @@ data:
         <ul>
           <li>A two-person product, built with Or Druker. I designed and built the backend: <b>six Go services</b>, the <b>Python LLM service</b>, the event schemas and the Kubernetes/GitOps setup. I also wrote a large part of the React dashboard. Or started the project, built the first version of the React app and many of its pages, and made the marketing site.</li>
           <li>The core is an <b>event-driven AI pipeline</b>. It writes prompts and buyer personas, runs them against three model providers, and pulls brand mentions, rankings, sentiment and cited sources out of every answer. Then it cleans up after itself: it merges duplicate companies and retires prompts that never surface a brand.</li>
-          <li>Development ran from October 2025 to March 2026: <b>445 commits in about 5 months</b>, 357 of them mine.</li>
         </ul>
       </div>
 
@@ -622,7 +622,7 @@ data:
 
       <h2>Infrastructure</h2>
       <p>The whole system runs on Kubernetes from one Helm chart, with dev, qa and prod environments. Flux applies each environment from Git. Secrets are stored in Git only in encrypted form, as Sealed Secrets. Traffic comes in through a Cloudflare Tunnel to a Traefik ingress with a rate-limit middleware. JetStream runs as a StatefulSet on a persistent volume. Logs are collected by Fluent Bit and shown in Grafana, with Loki storing them.</p>
-      <p>Every push to <code>main</code> triggers GitHub Actions to build nine container images, push them to GHCR, and commit the new image tags to the dev values file. Flux then deploys them. The bot commits in the history are these tag updates. A manual workflow promotes the dev images to qa or prod. For local work, one <code>docker compose --profile local</code> command starts the full stack.</p>
+      <p>Every push to <code>main</code> triggers GitHub Actions to build nine container images, push them to GHCR, and commit the new image tags to the dev values file. Flux then deploys them. A manual workflow promotes the dev images to qa or prod. For local work, one <code>docker compose --profile local</code> command starts the full stack.</p>
 
       <h2>By the numbers</h2>
       <div class="stats">
@@ -630,8 +630,6 @@ data:
         <div class="stat"><b>88</b><span>client-api operations</span></div>
         <div class="stat"><b>17</b><span>event topics</span></div>
         <div class="stat"><b>15</b><span>website audit checks</span></div>
-        <div class="stat"><b>~43k</b><span>lines of Go</span></div>
-        <div class="stat"><b>445</b><span>commits in ~5 months</span></div>
       </div>
 
       <h2>Stack</h2>
@@ -680,6 +678,11 @@ data:
       code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; background: #f4f4f4; padding: 0.1em 0.35em; border-radius: 4px; }
       .summary { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem 1.5rem; }
       .summary ul { margin: 0; }
+      .result { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin: 1.5rem 0 0.5rem; }
+      .result div { background: #111; color: #fff; border-radius: 12px; padding: 1.1rem 1.25rem; }
+      .result b { display: block; font-size: 2.25rem; line-height: 1.1; }
+      .result span { color: #bbb; font-size: 0.85rem; }
+      .result-note { color: #888; font-size: 0.8rem; margin: 0 0 1.5rem; }
       .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin: 0 0 1rem; }
       .stat { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem; }
       .stat b { display: block; font-size: 1.5rem; line-height: 1.2; }
@@ -720,11 +723,18 @@ data:
       <p class="tagline">Coding agents start every task from zero. RepoGuide learns from past agent sessions in a repo and gives the next agent a short briefing before it starts searching.</p>
       <p class="meta">2026 · Public beta · Product, architecture and code by me · Go, React, Claude, MCP, MongoDB, Kubernetes · <a href="https://repoguide.dev">repoguide.dev</a> · <a href="https://github.com/repoguide-dev">GitHub</a></p>
 
+      <div class="result">
+        <div><b>32%</b><span>fewer input tokens</span></div>
+        <div><b>94%</b><span>success rate, same as without RepoGuide</span></div>
+        <div><b>108</b><span>benchmark runs</span></div>
+      </div>
+      <p class="result-note">Measured on a reproducible benchmark: 18 tasks, 3 runs each, with and without RepoGuide. Details below.</p>
+
       <div class="summary">
         <ul>
-          <li>I built a developer tool on my own: a <b>Go CLI with a built-in MCP server</b>, a Go backend, a React web app, a shared Go module and a benchmark harness. That's about <b>69,000 lines of Go</b>. The CLI ships through Homebrew, signed and notarized for macOS.</li>
+          <li>I built a developer tool on my own: a <b>Go CLI with a built-in MCP server</b>, a Go backend, a React web app, a shared Go module and a benchmark harness. The CLI ships through Homebrew, signed and notarized for macOS.</li>
           <li>The core is a <b>mostly deterministic retrieval pipeline</b>. It parses session logs from seven coding agents, mines which files get read and edited together, and builds an evidence-backed briefing for the current task. Claude only routes the task and picks from candidate IDs. It never writes the advice.</li>
-          <li>I measured it with a <b>reproducible benchmark</b> (108 agent runs): <b>32% fewer input tokens</b> on average with the same 94% success rate, but only 4% lower cost. About <b>300 commits</b> between July and August 2026.</li>
+          <li>I measured it with a <b>reproducible benchmark</b> (108 agent runs): <b>32% fewer input tokens</b> on average with the same 94% success rate, but only 4% lower cost.</li>
         </ul>
       </div>
 
@@ -902,14 +912,10 @@ data:
 
       <h2>By the numbers</h2>
       <div class="stats">
-        <div class="stat"><b>~69k</b><span>lines of Go</span></div>
         <div class="stat"><b>~350</b><span>Go tests</span></div>
         <div class="stat"><b>7</b><span>session log formats</span></div>
         <div class="stat"><b>6</b><span>MCP tools</span></div>
         <div class="stat"><b>45</b><span>CLI releases</span></div>
-        <div class="stat"><b>~300</b><span>commits in 7 weeks</span></div>
-        <div class="stat"><b>108</b><span>benchmark runs</span></div>
-        <div class="stat"><b>−32%</b><span>input tokens</span></div>
       </div>
 
       <h2>Source on GitHub</h2>

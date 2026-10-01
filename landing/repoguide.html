@@ -32,6 +32,11 @@
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; background: #f4f4f4; padding: 0.1em 0.35em; border-radius: 4px; }
   .summary { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem 1.5rem; }
   .summary ul { margin: 0; }
+  .result { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin: 1.5rem 0 0.5rem; }
+  .result div { background: #111; color: #fff; border-radius: 12px; padding: 1.1rem 1.25rem; }
+  .result b { display: block; font-size: 2.25rem; line-height: 1.1; }
+  .result span { color: #bbb; font-size: 0.85rem; }
+  .result-note { color: #888; font-size: 0.8rem; margin: 0 0 1.5rem; }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin: 0 0 1rem; }
   .stat { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem; }
   .stat b { display: block; font-size: 1.5rem; line-height: 1.2; }
@@ -72,11 +77,18 @@
   <p class="tagline">Coding agents start every task from zero. RepoGuide learns from past agent sessions in a repo and gives the next agent a short briefing before it starts searching.</p>
   <p class="meta">2026 · Public beta · Product, architecture and code by me · Go, React, Claude, MCP, MongoDB, Kubernetes · <a href="https://repoguide.dev">repoguide.dev</a> · <a href="https://github.com/repoguide-dev">GitHub</a></p>
 
+  <div class="result">
+    <div><b>32%</b><span>fewer input tokens</span></div>
+    <div><b>94%</b><span>success rate, same as without RepoGuide</span></div>
+    <div><b>108</b><span>benchmark runs</span></div>
+  </div>
+  <p class="result-note">Measured on a reproducible benchmark: 18 tasks, 3 runs each, with and without RepoGuide. Details below.</p>
+
   <div class="summary">
     <ul>
-      <li>I built a developer tool on my own: a <b>Go CLI with a built-in MCP server</b>, a Go backend, a React web app, a shared Go module and a benchmark harness. That's about <b>69,000 lines of Go</b>. The CLI ships through Homebrew, signed and notarized for macOS.</li>
+      <li>I built a developer tool on my own: a <b>Go CLI with a built-in MCP server</b>, a Go backend, a React web app, a shared Go module and a benchmark harness. The CLI ships through Homebrew, signed and notarized for macOS.</li>
       <li>The core is a <b>mostly deterministic retrieval pipeline</b>. It parses session logs from seven coding agents, mines which files get read and edited together, and builds an evidence-backed briefing for the current task. Claude only routes the task and picks from candidate IDs. It never writes the advice.</li>
-      <li>I measured it with a <b>reproducible benchmark</b> (108 agent runs): <b>32% fewer input tokens</b> on average with the same 94% success rate, but only 4% lower cost. About <b>300 commits</b> between July and August 2026.</li>
+      <li>I measured it with a <b>reproducible benchmark</b> (108 agent runs): <b>32% fewer input tokens</b> on average with the same 94% success rate, but only 4% lower cost.</li>
     </ul>
   </div>
 
@@ -254,14 +266,10 @@
 
   <h2>By the numbers</h2>
   <div class="stats">
-    <div class="stat"><b>~69k</b><span>lines of Go</span></div>
     <div class="stat"><b>~350</b><span>Go tests</span></div>
     <div class="stat"><b>7</b><span>session log formats</span></div>
     <div class="stat"><b>6</b><span>MCP tools</span></div>
     <div class="stat"><b>45</b><span>CLI releases</span></div>
-    <div class="stat"><b>~300</b><span>commits in 7 weeks</span></div>
-    <div class="stat"><b>108</b><span>benchmark runs</span></div>
-    <div class="stat"><b>−32%</b><span>input tokens</span></div>
   </div>
 
   <h2>Source on GitHub</h2>

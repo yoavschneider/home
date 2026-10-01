@@ -75,7 +75,6 @@
     <ul>
       <li>A two-person product, built with Or Druker. I designed and built the backend: <b>six Go services</b>, the <b>Python LLM service</b>, the event schemas and the Kubernetes/GitOps setup. I also wrote a large part of the React dashboard. Or started the project, built the first version of the React app and many of its pages, and made the marketing site.</li>
       <li>The core is an <b>event-driven AI pipeline</b>. It writes prompts and buyer personas, runs them against three model providers, and pulls brand mentions, rankings, sentiment and cited sources out of every answer. Then it cleans up after itself: it merges duplicate companies and retires prompts that never surface a brand.</li>
-      <li>Development ran from October 2025 to March 2026: <b>445 commits in about 5 months</b>, 357 of them mine.</li>
     </ul>
   </div>
 
@@ -226,7 +225,7 @@
 
   <h2>Infrastructure</h2>
   <p>The whole system runs on Kubernetes from one Helm chart, with dev, qa and prod environments. Flux applies each environment from Git. Secrets are stored in Git only in encrypted form, as Sealed Secrets. Traffic comes in through a Cloudflare Tunnel to a Traefik ingress with a rate-limit middleware. JetStream runs as a StatefulSet on a persistent volume. Logs are collected by Fluent Bit and shown in Grafana, with Loki storing them.</p>
-  <p>Every push to <code>main</code> triggers GitHub Actions to build nine container images, push them to GHCR, and commit the new image tags to the dev values file. Flux then deploys them. The bot commits in the history are these tag updates. A manual workflow promotes the dev images to qa or prod. For local work, one <code>docker compose --profile local</code> command starts the full stack.</p>
+  <p>Every push to <code>main</code> triggers GitHub Actions to build nine container images, push them to GHCR, and commit the new image tags to the dev values file. Flux then deploys them. A manual workflow promotes the dev images to qa or prod. For local work, one <code>docker compose --profile local</code> command starts the full stack.</p>
 
   <h2>By the numbers</h2>
   <div class="stats">
@@ -234,8 +233,6 @@
     <div class="stat"><b>88</b><span>client-api operations</span></div>
     <div class="stat"><b>17</b><span>event topics</span></div>
     <div class="stat"><b>15</b><span>website audit checks</span></div>
-    <div class="stat"><b>~43k</b><span>lines of Go</span></div>
-    <div class="stat"><b>445</b><span>commits in ~5 months</span></div>
   </div>
 
   <h2>Stack</h2>
