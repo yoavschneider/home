@@ -9,6 +9,7 @@ const SITES = [
   "https://mosqai.xyz",
   "https://ratsfashion.art",
   "https://repoguide.dev",
+  "https://savon.co.il",
   "https://vhs-dreams.xyz",
   "https://yoavschneider.dev",
 ];
