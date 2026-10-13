@@ -109,7 +109,13 @@ spec:
       containers:
         - name: mongo
           image: mongo:8.0
-          args: ["--replSet", "rs0", "--keyFile", "/etc/mongo-keyfile/keyfile", "--bind_ip_all"]
+          # Without a cap, WiredTiger sizes its cache from the whole node's RAM
+          # and grows to fill it. 1 GB cache is plenty for <=5Gi of data; the
+          # limit leaves headroom for mongod's own overhead.
+          args: ["--replSet", "rs0", "--keyFile", "/etc/mongo-keyfile/keyfile", "--bind_ip_all", "--wiredTigerCacheSizeGB", "1"]
+          resources:
+            requests: { memory: 1536Mi, cpu: 100m }
+            limits: { memory: 2560Mi }
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom: { secretKeyRef: { name: mongo-root-credentials, key: username } }
