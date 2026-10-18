@@ -1,10 +1,10 @@
 # mongodump each db to a gzip archive (initContainer, shares emptyDir), then
 # aws-cli uploads it to R2 (S3-compatible) from the main container.
-# repoguide.dev and klimaantrag (paid orders): daily. Everything else: weekly.
+# repoguide.dev, klimaantrag and savon (paid orders): daily. Everything else: weekly.
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: mongo-backup-repoguide
+  name: mongo-backup-daily
   namespace: db
 spec:
   schedule: "0 3 * * *"
@@ -30,10 +30,18 @@ spec:
                   valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: klimaantrag-backup-uri } }
               volumeMounts:
                 - { name: backup, mountPath: /backup }
+            - name: dump-savon
+              image: mongo:8.0
+              command: ["sh", "-c", "mongodump --uri=\"$MONGO_URI\" --gzip --archive=/backup/savon-$(date +%F).archive.gz"]
+              env:
+                - name: MONGO_URI
+                  valueFrom: { secretKeyRef: { name: mongo-service-credentials, key: savon-backup-uri } }
+              volumeMounts:
+                - { name: backup, mountPath: /backup }
           containers:
             - name: upload
               image: amazon/aws-cli:2.17.62
-              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/repoguide/ --recursive --exclude '*' --include 'repoguide-*' && aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/klimaantrag/ --recursive --exclude '*' --include 'klimaantrag-*'"]
+              command: ["sh", "-c", "aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/repoguide/ --recursive --exclude '*' --include 'repoguide-*' && aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/klimaantrag/ --recursive --exclude '*' --include 'klimaantrag-*' && aws --endpoint-url \"$R2_ENDPOINT\" s3 cp /backup/ s3://$R2_BUCKET/savon/ --recursive --exclude '*' --include 'savon-*'"]
               envFrom:
                 - secretRef: { name: r2-credentials }
               volumeMounts:
