@@ -13,8 +13,6 @@ const SITES: { zone: string; hosts: string[] }[] = [
   { zone: "992032bce8ff1bca9cae1ebd0e02e6b0", hosts: ["faxoff.app"] },
   { zone: "663a93b0043d762c7540f392cf0cf41d", hosts: ["repoguide.dev"] },
   { zone: "750d9cf58d0fc76a8b8f06cf1cf74b53", hosts: ["hyphal.dev", "www.hyphal.dev"] },
-  { zone: "69f5f233e43b0102d16d6b67945bf39c", hosts: ["ratsfashion.art"] },
-  { zone: "df8c089f4eee562e0beb9bd2a136e459", hosts: ["vhs-dreams.xyz"] },
   { zone: "cdb90ed215ab36e030ed712340ce1d8d", hosts: ["mosqai.xyz"] },
   { zone: "91181afd6fab9bde948ebab258fdf1b7", hosts: ["flowgeo.io"] },
   { zone: "2f7a72c5792eaaf76f7cbf468f5c4fd3", hosts: ["fodo.info"] },
