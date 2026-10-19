@@ -98,11 +98,13 @@ spec:
         fsGroup: 999
       # mongod demands the keyfile be readable ONLY by its owner (0400/0600).
       # A Secret volume can't be owned by uid 999 directly, so copy it into an
-      # emptyDir with the right owner/mode before mongod starts.
+      # emptyDir with the right owner/mode before mongod starts. The emptyDir
+      # outlives a container restart (e.g. after a node reboot), so remove the
+      # read-only copy from the last run first: cp cannot overwrite a 0400 file.
       initContainers:
         - name: keyfile-perms
           image: mongo:8.0
-          command: ["sh", "-c", "cp /keyfile-src/keyfile /keyfile/keyfile && chmod 400 /keyfile/keyfile"]
+          command: ["sh", "-c", "rm -f /keyfile/keyfile && cp /keyfile-src/keyfile /keyfile/keyfile && chmod 400 /keyfile/keyfile"]
           volumeMounts:
             - { name: keyfile-src, mountPath: /keyfile-src }
             - { name: keyfile, mountPath: /keyfile }
