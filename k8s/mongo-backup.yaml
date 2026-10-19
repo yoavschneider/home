@@ -1,6 +1,10 @@
 # mongodump each db to a gzip archive (initContainer, shares emptyDir), then
 # aws-cli uploads it to R2 (S3-compatible) from the main container.
 # repoguide.dev, klimaantrag and savon (paid orders): daily. Everything else: weekly.
+# savon's API volume (attachment files, photos, SQLite visit log) is backed up to
+# the same bucket under savon-volume/ by savon-volume-backup in namespace savon-v2
+# (savon repo, k8s/v2/volume-backup.yaml); a restore needs both. Restore drill of
+# savon/ passed 19 October 2026.
 apiVersion: batch/v1
 kind: CronJob
 metadata:
