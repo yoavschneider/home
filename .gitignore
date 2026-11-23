@@ -1,3 +1,4 @@
 .env.prod
 k8s/mongo-compass.sh
 .wrangler/
+.idea/
